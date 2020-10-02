@@ -1,13 +1,13 @@
-# Introduction to Istio
-Curriculum for Introduction to Istio service mesh workshop. All training resources are available in the Layer5 service mesh community on [Slack](http://slack.layer5.io).
+# Linkerd Fundamentals
+Curriculum for Linkerd fundamentals workshop. All training resources are available in the Layer5, the service mesh community on [Slack](http://slack.layer5.io).
 
 ## Prerequisites
-- [Join the Layer5 service mesh community on Slack](http://slack.layer5.io)
+- [Star Meshery Project, the service mesh management place](https://github.com/layer5io/meshery/stargazers)
 - [Prereq - Setup Docker, Kubernetes, and Meshery](prereq/README.md)
 
 ## Segment 2
 ### Setup Istio
-- [Lab 1 - Setup Istio](lab-1/README.md)
+- [Lab 1 - Setup Linkerd](lab-1/README.md)
 
 ## Segment 3
 ### Deploying an app onto the mesh

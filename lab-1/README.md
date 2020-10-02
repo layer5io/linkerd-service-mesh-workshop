@@ -4,60 +4,41 @@ Now that we have a Kubernetes cluster and Meshery, we are ready to download and 
 
 ## Steps
 
-* [1. Install Istio](#1)
+* [1. Install Linkerd](#1)
 * [2. Verify install](#2)
 * [3. Confirm add-ons](#3)
 
-Optional (manual install of Istio):
-* [1. Download Istio resources](#1.1)
-* [2. Setup `istioctl`](#1.2)
 
-## <a name="1"></a> 1 - Install Istio
+## <a name="1"></a> 1 - Install Linkerd
 
-In Meshery, select the deployed Istio adapter in the left nav menu under the `Management` section ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio.png)).
+In Meshery, select the deployed Linkerd adapter in the left nav menu under the `Management` section ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio.png)).
 
-On the Istio adapter's management page, on the `Install` card, you can click on the (+) icon and select `Latest Istio with mTLS` to install the latest version of Istio with mTLS ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio-install.png)).
+On the Istio adapter's management page, on the `Install` card, you can click on the (+) icon and select `Latest LinkerD` to install the latest version of Istio with mTLS ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio-install.png)).
 
 <small>For manual steps go [here](#appendix)</small>
 
 ## <a name="2"></a> 2 - Verify install
 
-Istio is deployed in a separate Kubernetes namespace `istio-system`. To check if Istio is deployed, and also, to see all the pieces that are deployed, execute the following:
+Linkerd is deployed in a separate Kubernetes namespace `Linkerd`. To check if Linkerd is deployed, and also, to see all the pieces that are deployed, execute the following:
 
 ```sh
-kubectl get all -n istio-system
+linkerd check
 ```
 
 ## <a name="3"></a> 3 - Enforce mTLS strict mode
-Require that service-to-service traffic be encrypted:
-```sh
-kubectl apply -f - <<EOF
-apiVersion: "security.istio.io/v1beta1"
-kind: "PeerAuthentication"
-metadata:
-  name: "default"
-spec:
-  mtls:
-    mode: STRICT
-EOF
-```
-Output will be similar to:
-```sh
-peerauthentication.security.istio.io/default created
-```
+
+By default, Linkerd automatically enables mutual Transport Layer Security (mTLS) for most HTTP-based communication between meshed pods, by establishing and authenticating secure, private TLS connections between Linkerd proxies.ntication.security.istio.io/default created
+
 
 ## <a name="4"></a> 4 - Confirming Add-ons
 	
-Istio, as part of this workshop, is installed with several optional addons like:
+Linkerd, as part of this workshop, is installed with several optional addons like:
 1. [Prometheus](https://prometheus.io/)
 2. [Grafana](https://grafana.com/)
-3. [Zipkin](https://zipkin.io/)
-4. [Jaeger](https://www.jaegertracing.io/)
-5. [Kiali](https://www.kiali.io/)
-	
-You will use Prometheus and Grafana for collecting and viewing metrics, while for viewing distributed traces, you can choose between [Zipkin](https://zipkin.io/) or [Jaeger](https://www.jaegertracing.io/). In this training, we will use Jaeger.
-	
-Kiali is another add-on which can be used to generate a graph of services within an Istio mesh and is deployed as part of Istio in this lab.
+3. [Jaeger](https://www.jaegertracing.io/)
+4. [Dashboard](https://linkerd.io/2/reference/architecture/#dashboard)
+
+You will use Prometheus and Grafana for collecting and viewing metrics, while for viewing distributed traces, you can choose between [Jaeger](https://www.jaegertracing.io/). In this training, we will use Jaeger.
 
 ## [Continue to Lab 2 - Deploy Sample Bookinfo app](../lab-2/README.md)
 
@@ -67,7 +48,7 @@ Alternative, manual installation steps below. No need to execute, if you have pe
 
 ## <a name="appendix"></a> Appendix - Alternative Manual Install
 
-### <a name="1.1"></a> 1.1 - Download Istio
+### <a name="1.1"></a> 1.1 - Download Linkerd
 You will download and deploy the latest Istio resources on your Kubernetes cluster. 
 
 ***Note to Docker Desktop users:*** please ensure your Docker VM has atleast 4GiB of Memory, which is required for all services to run.
@@ -80,39 +61,38 @@ curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.3.0 sh -
 ### <a name="1.2"></a> 1.2 - Setting up istioctl
 On a *nix system, you can setup istioctl by doing the following: 
 
-The above command will get the latest Istio package and untar it in the same folder.
+The above command will get the latest Linkerd package and untar it in the same folder.
 
-Change into the Istio package directory and add the `istioctl` client to your PATH environment variable.
+Change into the Istio package directory and add the `linkerd` client to your PATH environment variable.
 ```sh
-cd istio-*
-export PATH=$PWD/bin:$PATH
+curl -sL https://run.linkerd.io/install | sh
+export PATH=$PATH:$HOME/.linkerd2/bin
+```
+
+Alternatively, on MacOS you can sue `HomeBrew` to install `linkerd`
+```sh
+brew install linkerd
 ```
 
 To verify `istioctl` is setup lets try to print out the command help
 ```sh
-istioctl version
+linkerd version
 ```
 
-We can use a new feature in istioctl to check if the cluster is ready for install:
+We can use a new feature in linkerd to check if the cluster is ready for install:
 
 ```sh
-istioctl verify-install
+linkerd check --pre
 ```
 
 ### Install istio:
 
-Deploy Istio custom resources:
+Deploy Linkerd custom resources:
 ```sh
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+linkerd install | kubectl apply -f -
 ```
 
-If you see an error message like this:
+Use the following command to see the progress on the installation of Linkerd custom CRDs and components
 ```sh
-error: unable to recognize "istio.yaml": no matches for admissionregistration.k8s.io/, Kind=MutatingWebhookConfiguration
-```
-
-You are likely running Kubernetes version 1.9 or earlier, which might NOT have support for mutating admission webhooks or might not have it enabled and is the reason for the error. You can continue with the lab without any issues.
-
-```sh
-kubectl apply -f install/kubernetes/istio-demo.yaml
+linkerd check
 ```
