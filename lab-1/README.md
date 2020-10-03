@@ -58,7 +58,7 @@ On your local machine:
 curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.3.0 sh -
 ```
 
-### <a name="1.2"></a> 1.2 - Setting up istioctl
+### <a name="1.2"></a> 1.2 - Setting up `linkerd` CLI
 On a *nix system, you can setup istioctl by doing the following: 
 
 The above command will get the latest Linkerd package and untar it in the same folder.
