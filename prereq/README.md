@@ -114,4 +114,4 @@ Or to install on Kubernetes by cloning the Meshery repo:</p>
  $ kubectl -n meshery apply -f deployment_yamls/k8s
 ``` -->
 
-# [Continue to Lab 1 - Deploy Istio](../lab-1/README.md)
+# [Continue to Lab 1 - Deploy Linkerd](../lab-1/README.md)
