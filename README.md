@@ -1,5 +1,5 @@
 # Linkerd Fundamentals
-Curriculum for Linkerd fundamentals workshop. All training resources are available in the Layer5, the service mesh community on [Slack](http://slack.layer5.io).
+A service mesh workshop on the fundamentals of Linkerd. All training resources are available in the Layer5, the service mesh community on [Slack](http://slack.layer5.io).
 
 ## Prerequisites
 - [Prereq - Setup Docker, Kubernetes, and Meshery](prereq/README.md)
