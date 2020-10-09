@@ -1,161 +1,83 @@
 # Lab 3 - Access Bookinfo site through Istio Ingress Gateway
 
-The components deployed on the service mesh by default are not exposed outside the cluster. External access to individual services so far has been provided by creating an external load balancer on each service.
+The components deployed on the service mesh by default are not exposed outside the cluster.
 
-An ingress gateway service is deployed as a Kubernetes service of type LoadBalancer. For making Bookinfo accessible from outside, we have to create an `Istio Gateway` for the service and also define an `Istio VirtualService` for Bookinfo with the routes we need.
+For reasons of effortlessness, Linkerd doesn't give its own ingress controller. Rather, Linkerd is intended to work close by your ingress controller of decision.
 
-## 3.1 Inspecting the Istio Ingress gateway
+## 3.1 How to use Ingress with Linkerd
 
-The ingress gateway gets expossed as a normal kubernetes service of type load balancer:
+If you're planning on injecting Linkerd into your ingress controller's pods there is some configuration required. Linkerd discovers services based on the :authority or Host header. This allows Linkerd to understand what service a request is destined for without being dependent on DNS or IPs.
+
+When it comes to ingress, most controllers do not rewrite the incoming header (example.com) to the internal service name (example.default.svc.cluster.local) by default. In this case, when Linkerd receives the outgoing request it thinks the request is destined for example.com and not example.default.svc.cluster.local. This creates an infinite loop that can be pretty frustrating!
+
+We will be using Nginx ingress gateway with Linkerd in this workshop.
+
+## 3.2 Installing Nginx ingress controller/gateway
+
+**Pre-requisites**
+- Kubernetes (already set-up)
+- Helm
+
+**Installation**
+- Clone the Ingress controller repo (repo is required to install the CRDs)
 ```sh
-kubectl get svc istio-ingressgateway -n istio-system -o yaml
+git clone https://github.com/nginxinc/kubernetes-ingress/
+cd kubernetes-ingress/deployments/helm-chart
+git checkout v1.8.1
 ```
-
-Because the Istio Ingress Gateway is an Envoy Proxy you can inspect it using the admin routes.  First find the name of the istio-ingressgateway:
-
+- Apply the CRDs to your cluster (only for helm v2.x)
 ```sh
-kubectl get pods -n istio-system
-```
-Copy and paste your ingress gateway's pod name. Execute:
-```sh
-kubectl -n istio-system exec -it <istio-ingressgateway-...> bash
-```
-
-You can view the statistics, listeners, routes, clusters and server info for the Envoy proxy by forwarding the local port:
-
-```sh
-curl localhost:15000/help
-curl localhost:15000/stats
-curl localhost:15000/listeners
-curl localhost:15000/clusters
-curl localhost:15000/server_info
-```
-
-See the [admin docs](https://www.envoyproxy.io/docs/envoy/latest/operations/admin) for more details.
-
-Also it can be helpful to look at the log files of the Istio ingress controller to see what request is being routed. 
-
-Before we check the logs, let us get out of the container back on the host:
-```sh
-exit
-```
-
-Now let us find the ingress pod and output the log:
-
-```sh
-kubectl logs istio-ingressgateway-... -n istio-system
-```
-
-## 3.2 View Istio Ingress Gateway for Bookinfo
-
-<!-- ### 3.2.1 - Configure the Bookinfo route with the Istio Ingress gateway:
-
-We can create a virtualservice & gateway for bookinfo app in the ingress gateway by running the following:
-
-```sh
-kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
-```
-
-### 3.2.2 - View the Gateway and VirtualServices -->
-### 3.2.1 - View the Gateway and VirtualServices
-
-Check the created `Istio Gateway` and `Istio VirtualService` to see the changes deployed:
-```sh
-kubectl get gateway
-kubectl get gateway -o yaml
-
-kubectl get virtualservices
-kubectl get virtualservices -o yaml
-```
-
-<!-- ### 3.2.3 - Find the external port of the Istio Ingress Gateway by running: -->
-### 3.2.2 - Find the external port of the Istio Ingress Gateway by running:
-
-```sh
-kubectl get service istio-ingressgateway -n istio-system -o wide
-```
-
-To just get the first port of istio-ingressgateway service, we can run this:
-```sh
-kubectl get service istio-ingressgateway -n istio-system --template='{{(index .spec.ports 1).nodePort}}'
-```
-
-The HTTP port is usually 31380.
-
-Or run these commands to retrieve the full URL:
-
-```sh
-echo "http://$(kubectl get nodes --selector=kubernetes.io/role!=master -o jsonpath={.items[0].status.addresses[?\(@.type==\"InternalIP\"\)].address}):$(kubectl get svc istio-ingressgateway -n istio-system -o jsonpath='{.spec.ports[1].nodePort}')/productpage"
-```
-
-Docker Desktop users please use `http://localhost/productpage` to access product page in your browser.
-
-## 3.3 Apply default destination rules
-
-Before we start playing with Istio's traffic management capabilities we need to define the available versions of the deployed services. They are called subsets, in destination rules.
-
-<!-- Run the following command to create default destination rules for the Bookinfo services:
-```sh
-kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
-``` -->
-
-Now in Meshery, in the browser, navigate to the Istio adapter's management page from the left nav menu again.
-
-On the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Default Book info destination rules (defines subsets)` from the list. This will deploy the destination rules for all the Book info services defining their subsets.
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-In a few seconds we should be able to verify the destination rules created by using the command below:
-
-```sh
-kubectl get destinationrules
-
-
-kubectl get destinationrules -o yaml
-```
-
-## 3.4 - Browse to Bookinfo
-Browse to the website of the Bookinfo. To view the product page, you will have to append
-`/productpage` to the url.
-
-### 3.4.1 - Reload Page
-Now, reload the page multiple times and notice how it round robins between v1, v2 and v3 of the reviews service.
-
-## 3.5 Inspect the Istio proxy of the productpage pod
-
-To better understand the istio proxy, let's inspect the details.  Let us `exec` into the productpage pod to find the proxy details.  To do so we need to first find the full pod name and then `exec` into the istio-proxy container:
-
-```sh
-kubectl get pods
-kubectl exec -it productpage-v1-... -c istio-proxy  sh
-```
-
-Once in the container look at some of the envoy proxy details by inspecting it's config file:
-
-```sh
-ps aux
-ls -l /etc/istio/proxy
-cat /etc/istio/proxy/envoy-rev0.json
-```
-
-For more details on envoy proxy please check out their [admin docs](https://www.envoyproxy.io/docs/envoy/v1.5.0/operations/admin).
-
-As a last step, lets exit the container:
-
-```sh
-exit
-```
-
-
-## <a name="appendix"></a> Appendix
-
-### Default destination rules
-Run the following command to create default destination rules for the Bookinfo services:
-```sh
-kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
+kubectl create -f crds/
 ``` 
+- Install the controller using helm-chart
+```sh
+helm install my-release nginx-stable/nginx-ingress
+```
 
+## 3.3 Setting up ingress controller with the sample application deployed
 
+Apply the following ingress definition to your cluster 
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: emojivoto
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
 
-## [Continue to lab 4 - Telemetry](../lab-4/README.md)
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - backend:
+          serviceName: web-svc
+          servicePort: 80
+```
+
+The important definition in the above written definition is 
+```sh
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+```
+
+This example combines the two directives that NGINX uses for proxying HTTP and gRPC traffic. In practice, it is only necessary to set either the proxy_set_header or grpc_set_header directive, depending on the protocol used by the service, however NGINX will ignore any directives that it doesn't need.
+Nginx will add a l5d-dst-override header to instruct Linkerd what service the request is destined for. You'll want to include both the Kubernetes service FQDN (web-svc.emojivoto.svc.cluster.local) and the destination servicePort.
+
+To test this, you need to get the external IP of your controller which you can get by running 
+```sh
+kubectl get svc --all-namespaces \
+  -l app=nginx-ingress,component=controller \
+  -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress[0].ip
+```
+
+You can now curl to your service without using port-forward
+```sh
+curl -H "Host: example.com" http://{external-ip}
+```
+## [Continue to lab 4 - Exploring Linkerd Web](../lab-4/README.md)

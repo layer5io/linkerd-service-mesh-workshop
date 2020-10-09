@@ -21,85 +21,86 @@ Linkerd, deployed as part of this workshop, will also deploy the sidecar injecto
 
 
 ```sh
-kubectl -n linkerd get deployment -l linkerd=sidecar-injector
+kubectl get deployment linkerd-proxy-injector -n linkerd
 ```
 Output:
 
 ```sh
-NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-linkerd-sidecar-injector   1         1         1            1           1d
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+linkerd-proxy-injector   1/1     1            1           9m49s
 ```
-
-NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the [selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors).
-
 
 ```sh
-kubectl get namespace -L linkerd
+kubectl get namespace
 ```
-<!-- 
+
 Output:
 ```sh
 NAME           STATUS    AGE       ISTIO-INJECTION
-default        Active    1h        
-istio-system   Active    1h        disabled
-kube-public    Active    1h        
-kube-system    Active    1h
-``` -->
+NAME              STATUS   AGE   LINKERD
+default           Active   59d
+docker            Active   59d
+kube-node-lease   Active   59d
+kube-public       Active   59d
+kube-system       Active   59d
+linkerd           Active   10m
+```
 
 Now in Meshery in the browser, navigate to the Linkerd adapter's management page from the left nav menu.
 
-On the Istio adapter's management page, please enter `default` in the `Namespace` field.
+On the Linkerd adapter's management page, please enter `default` in the `Namespace` field.
 Then, click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
 
 This will do 3 things: 
-1. Label `default` namespace for sidecar injection
-1. Deploys all the Book info services in the `default` namespace
-1. Deploys the virtual service and gateway needed to expose the Book info's productpage in the `default` namespace.
+1. Deploy `Emojivoto Application` in Emojivoto namespace.
+1. Deploys all the Emojivoto services and replica's in the required namespace
+1. Injects Linkerd into each component of the `Emojivoto Application`
 
 <small>Manual step for can be found [here](#appendix)</small>
-
-
-### Verify the namespace is labelled
-
-```sh
-kubectl get namespace -L linkerd-injection
-```
-
-Output:
-<!-- ```sh
-NAME           STATUS    AGE       ISTIO-INJECTION
-default        Active    1h        enabled
-istio-system   Active    1h        disabled
-kube-public    Active    1h        
-kube-system    Active    1h
-``` -->
 
 ### <a name="verify"></a> Verify Emojivoto deployment
 
 1. Verify that previous deployments are all in a state of AVAILABLE before continuing. **Do not proceed until they are up and running.**
 
     ```sh
-    watch kubectl get deployment
+    watch -n emojivoto kubectl get deployment
     ```
 
 2. Inspect the details of the pods
 
     Let us look at the details of the pods:
     ```sh
-    watch kubectl get po
+    watch -n emojivoto kubectl get po
     ```
 
     Let us look at the details of the services:
     ```sh
-    watch kubectl get svc
+    watch -n emojivoto kubectl get svc
     ```
 
     Now let us pick a service, for instance productpage service, and view it's sidecar configuration:
     ```sh
-    kubectl get po
+    kubectl -n emojivoto get po
 
-    kubectl describe pod productpage-v1-.....
+    kubectl -n emojivoto describe service svc/web-svc
     ```
+#### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
+
+ The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from linkerd service mesh.
+ Now we will be injecting linkerd into our sample application
+ ```sh
+ kubectl get -n emojivoto deploy -o yaml \
+  | linkerd inject - \
+  | kubectl apply -f -
+```
+
+This command retrieves all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
+
+You've now added Linkerd to existing services! Just as with the control plane, it is possible to verify that everything worked the way it should with the data plane. To do this check, run:
+
+```sh
+linkerd -n emojivoto check --proxy
+```
 
 ## [Continue to Lab 3 - Access Linkerd via Linkerd Web](../lab-3/README.md)
 
@@ -109,7 +110,7 @@ Alternative, manual installation steps below. No need to execute, if you have pe
 
 ## <a name="appendix"></a> Appendix - Alternative Manual Steps
 
-### Label namespace for injection
+### Deploy emojivoto application
 Install emojivoto into the emojivoto namespace by running:
 ```sh
 curl -sL https://run.linkerd.io/emojivoto.yml \
@@ -123,18 +124,28 @@ kubectl -n emojivoto port-forward svc/web-svc 8080:80
 ```
 
 ### Deploy Emojivoto
-Applying this yaml file included in the Istio package you collected in https://github.com/layer5io/istio-service-mesh-workshop/tree/master/lab-1#1 will deploy the Book info app in you cluster.
+Applying this yaml file included in the Istio package you collected in https://run.linkerd.io/emojivoto.yml will deploy the Book info app in you cluster.
 
 
 ```sh
-kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl apply -f https://run.linkerd.io/emojivoto.yml
 ```
 
-<!-- Already deployed by linkerd using tap components -->
+#### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
 
-<!-- ### Deploy Gateway and Virtual Service for Book info app -->
-<!-- 
+ The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from linkerd service mesh.
+ Now we will be injecting linkerd into our sample application
+ ```sh
+ kubectl get -n emojivoto deploy -o yaml \
+  | linkerd inject - \
+  | kubectl apply -f -
+```
+
+This command retrieves all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
+
+You've now added Linkerd to existing services! Just as with the control plane, it is possible to verify that everything worked the way it should with the data plane. To do this check, run:
+
 ```sh
-kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
-``` -->
+linkerd -n emojivoto check --proxy
+```
 
