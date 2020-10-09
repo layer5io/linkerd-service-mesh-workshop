@@ -12,168 +12,63 @@ Accessing Grafana Dashboard for each service in Linkerd :
 
 ## 6.2 Distributed tracing with Linkerd
 
-To start, we will inject a 7s delay for accessing the ratings service for a user `jason`. reviews v2 service has a 10s hard-coded connection timeout for its calls to the ratings service configured globally.
+The first step of getting distributed tracing setup is installing a collector onto your cluster. This component consists of “receivers” that consume spans emitted from the mesh and your applications as well as “exporters” that convert spans and forward them to a backend.
+Linkerd now has add-ons which enables users to install extra components that integrate well with Linkerd. Tracing is such one add-on which includes OpenCensus Collector and Jaeger.
 
-<!-- ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-delay.yaml
-``` -->
-
-On the Istio adapter's management page in Meshery, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Inject a 7s delay in the traffic to Book info ratings service for user Jason` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-This will update the existing virtual service definition for ratings to inject a delay for user `jason` to access the ratings V1.
-
-In a few, we should be able to verify the virtual service by using the command below:
+To enable tracing onto your cluster :
 ```sh
-kubectl get virtualservice ratings -o yaml
+cat >> config.yaml << EOF
+tracing:
+  enabled: true
+EOF
 ```
 
-Output will be similar to:
-```yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"ratings","namespace":"default"},"spec":{"hosts":["ratings"],"http":[{"fault":{"delay":{"fixedDelay":"7s","percent":100}},"match":[{"headers":{"end-user":{"exact":"USER_NAME"}}}],"route":[{"destination":{"host":"ratings","subset":"v1"}}]},{"route":[{"destination":{"host":"ratings","subset":"v1"}}]}]}}
-  creationTimestamp: 2018-10-26T15:21:42Z
-  generation: 1
-  name: ratings
-  namespace: default
-  resourceVersion: "14790"
-  selfLink: /apis/networking.istio.io/v1alpha3/namespaces/default/virtualservices/ratings
-  uid: d7d7347f-d932-11e8-88c5-0242f983c5dd
+This configuration file can also be used to apply Add-On configuration (not just specific to tracing Add-On).
+
+Now, the above configuration can be applied using the --addon-config file with CLI :
+```sh
+linkerd upgrade --addon-config config.yaml | kubectl apply -f -
+```
+
+You will now have a linker-collector and linkerd-jaeger deployments in the linkerd namespace that are running as part of the mesh. Collector has been configured to:
+- Receive spans from OpenCensus clients
+- Export spans to a Jaeger backend
+
+Before moving onto the next step, make sure everything is up and running with kubectl:
+```sh
+kubectl -n linkerd rollout status deploy/linkerd-collector
+kubectl -n linkerd rollout status deploy/linkerd-jaeger
+```
+
+## 6.2.1 Configure your sample application
+
+Apply the tracing configuration to the `emojivoto application`:
+```sh
+kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
 spec:
-  hosts:
-  - ratings
-  http:
-  - fault:
-      delay:
-        fixedDelay: 7s
-        percentage:
-          value: 100
-    match:
-    - headers:
-        end-user:
-          exact: jason
-    route:
-    - destination:
-        host: ratings
-        subset: v1
-  - route:
-    - destination:
-        host: ratings
-        subset: v1
+  template:
+    metadata:
+      annotations:
+        config.linkerd.io/trace-collector: linkerd-collector.linkerd:55678
+        config.alpha.linkerd.io/trace-collector-service-account: linkerd-collector
+'
 ```
 
-Now we login to `/productpage` as user `jason` and observe that the page loads but because of the induced delay between services the reviews section will show :
-
-<pre>
-        <b>Error fetching product reviews!</b>
-
-Sorry, product reviews are currently unavailable for this book.
-</pre>
-
-If you logout or login as a different user, the page should load normally without any errors.
-
-## 6.2 Inject a route rule to create a fault using HTTP abort
-
-In this section, , we will introduce an HTTP abort to the ratings microservices for user `jason`.
-
-<!-- Now apply the change to the cluster:
+Before moving onto the next step, make sure everything is up and running with kubectl:
 ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-abort.yaml
-``` -->
+kubectl -n emojivoto rollout status deploy/web
+```
 
+Unlike most features of a service mesh, distributed tracing requires modifying the source of your application. Tracing needs some way to tie incoming requests to your application together with outgoing requests to dependent services. To do this, some headers are added to each request that contain a unique ID for the trace. Linkerd uses the b3 propagation format to tie these things together. Emojivoto application already incorporates all of such changes.
 
-On the Istio adapter's management page in Meshery, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Inject HTTP abort to Book info ratings service for user Jason` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-This will update the existing virtual service definition for ratings to inject a HTTP abort for user `jason` to access the ratings V1.
-
-In a few, we should be able to verify the virtual service by using the command below:
-
+To enable tracing in emojivoto, run:
 ```sh
-kubectl get virtualservice ratings -o yaml
+kubectl -n emojivoto set env --all deploy OC_AGENT_HOST=linkerd-collector.linkerd:55678
 ```
 
-Output will be similar to:
-```yaml
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"ratings","namespace":"default"},"spec":{"hosts":["ratings"],"http":[{"fault":{"abort":{"httpStatus":500,"percent":100}},"match":[{"headers":{"end-user":{"exact":"USER_NAME"}}}],"route":[{"destination":{"host":"ratings","subset":"v1"}}]},{"route":[{"destination":{"host":"ratings","subset":"v1"}}]}]}}
-  creationTimestamp: 2018-10-26T15:21:42Z
-  generation: 1
-  name: ratings
-  namespace: default
-  resourceVersion: "22405"
-  selfLink: /apis/networking.istio.io/v1alpha3/namespaces/default/virtualservices/ratings
-  uid: d7d7347f-d932-11e8-88c5-0242f983c5dd
-spec:
-  hosts:
-  - ratings
-  http:
-  - fault:
-      abort:
-        httpStatus: 500
-        percentage:
-          value: 100
-    match:
-    - headers:
-        end-user:
-          exact: jason
-    route:
-    - destination:
-        host: ratings
-        subset: v1
-  - route:
-    - destination:
-        host: ratings
-        subset: v1
-```
+## 6.3 Explore Jaeger
 
-Now we login to `/productpage` as user `jason` and observe that the page loads without any new delays but because of the induced fault between services the reviews section will show:
-
- `Ratings service is currently unavailable`.
-
-### 6.3 Verify fault injection
-Verify the fault injection by logging out (or logging in as a different user), the page should load normally without any errors.
-
-## [Continue to Lab 7 - Circuit Breaking](../lab-7/README.md)
-
-<hr />
-Alternative, manual installation steps below. No need to execute, if you have performed the steps above.
-<hr />
-
-## <a name="appendix"></a> Appendix
-
-### Route all traffic to version V1 of all services
-
+With `vote-bot` starting traces for every request, spans should now be showing up in Jaeger. To get to the UI, start a port forward and send your browser to http://localhost:16686.
 ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml 
+kubectl -n linkerd port-forward svc/linkerd-jaeger 16686
 ```
-
-### Route all traffic to version V2 of reviews for user Jason
-
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
-```
-
-### Inject 7s delay for ratings service
-
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-delay.yaml
-```
-
-### Inject HTTP abort for ratings service
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-abort.yaml
-```
-
-
