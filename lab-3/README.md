@@ -19,19 +19,10 @@ We will be using Nginx ingress gateway with Linkerd in this workshop.
 - Helm
 
 **Installation**
-- Clone the Ingress controller repo (repo is required to install the CRDs)
+- Install Ingress Controller using
 ```sh
-git clone https://github.com/nginxinc/kubernetes-ingress/
-cd kubernetes-ingress/deployments/helm-chart
-git checkout v1.8.1
-```
-- Apply the CRDs to your cluster (only for helm v2.x)
-```sh
-kubectl create -f crds/
-``` 
-- Install the controller using helm-chart
-```sh
-helm install my-release nginx-stable/nginx-ingress
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install my-release ingress-nginx/ingress-nginx
 ```
 
 ## 3.3 Setting up ingress controller with the sample application deployed
