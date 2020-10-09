@@ -1,288 +1,35 @@
-# Lab 5 - Request Routing and Canary Testing
+# Lab 5 - Debugging application using Linkerd
 
-In this lab we are going to get our hands on some of the traffic management capabilities of Istio.
+We will be using Linkerd to debug the sample application, we had deployed earlier in the workshop.
+The demo application emojivoto has some issues. Let's use that and Linkerd to diagnose an application that fails in ways which are a little more subtle than the entire service crashing. 
 
-## 5.1 Apply default destination rules
+Let's jump into debugging the Emojivoto application right away.
 
-Before we start playing with Istio's traffic management capabilities we need to define the available versions of the deployed services. They are called subsets, in destination rules.
+## 5.1 Exploring the Linkerd Web
 
-<!-- Run the following command to create default destination rules for the Bookinfo services:
-```sh
-kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
-``` -->
+If you glance at the Linkerd dashboard (by running the linkerd dashboard command), you should see all the resources in the emojivoto namespace, including the deployments. Each deployment running Linkerd shows success rate, requests per second and latency percentiles.
+You might notice is that the success rate is well below 100%! Let's debug this further & click on the web component.
 
-Now in Meshery in the browser, navigate to the Istio adapter's management page from the left nav menu again.
+<img align="center" style="margin-bottom:20px;" src="img/octopus.png"  width="70%" />
 
-On the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Default Book info destination rules (defines subsets)` from the list. 
+The first thing you'll see here is that the web deployment is taking traffic from vote-bot (a deployment included with emojivoto to continually generate a low level of live traffic). The web deployment also has two outgoing dependencies, emoji and voting.
 
-<small>Manual step for can be found [here](#appendix)</small>
+While the emoji deployment is handling every request from web successfully, it looks like the voting deployment is failing some requests! A failure in a dependent deployment may be exactly what is causing the errors that web is returning.
 
-This will deploy the destination rules for all the Book info services defining their subsets.
+## 5.2 Debugging the application
 
-In a few seconds we should be able to verify the destination rules created by using the command below:
+Scrolling down a little from the deployment page, we'll see a live list of all traffic that is incoming to and outgoing from web.
 
-```sh
-kubectl get destinationrules
+<img align="center" style="margin-bottom:20px;" src="img/web-top.png"  width="70%" />
 
+There are two calls that are not at 100%: the first is vote-bot's call to the `/api/vote` endpoint. The second is the `VoteDoughnut` call from the web deployment to its dependent deployment, voting.
+Since `/api/vote` is an incoming call, and `VoteDoughnut` is an outgoing call, this is a good clue that this endpoint is what's causing the problem!
 
-kubectl get destinationrules -o yaml
-```
-
-## 5.2 Configure the default route for all services to V1
-
-As part of the bookinfo sample app, there are multiple versions of reviews service. When we load the `/productpage` in the browser multiple times we have seen the reviews service round robin between v1, v2 or v3. As the first exercise, let us first restrict traffic to just V1 of all the services.
-
-In Meshery on the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route traffic to V1 of all Book info services` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
 
-<!-- 
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml 
-``` -->
+To dig a little deeper, we can click on the tap icon in the far right column. This will take us to the live list of requests that match only this endpoint. You'll see `Unknown under the GRPC status column`. 
 
-In a few, this will creates a bunch of `virtualservice` entries which will route all requests to ONLY V1 of the services.
+<img align="center" style="margin-bottom:20px;" src="img/web-tap.png"  width="70%" />
 
-To view the applied rule:
-```sh
-kubectl get virtualservice
-```
+This is because the requests are failing with a [gRPC status code 2](https://godoc.org/google.golang.org/grpc/codes#Code), which is a common error response. Linkerd is aware of gRPC's response classification without any other configuration.
 
-To take a look at a specific one:
-```sh
-kubectl get virtualservice reviews -o yaml
-```
-
-*Please note:* In the place of the above command, we can either use kubectl or istioctl.
-
-
-Output:
-```yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"reviews","namespace":"default"},"spec":{"hosts":["reviews"],"http":[{"route":[{"destination":{"host":"reviews","subset":"v1"}}]}]}}
-  creationTimestamp: null
-  name: reviews
-  namespace: default
-  resourceVersion: "11595"
-spec:
-  hosts:
-  - reviews
-  http:
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
----
-```
-
-Now when we reload the `/productpage` several times, we will ONLY be viewing the data from v1 of all the services, which means we will not see any ratings (any stars).
-
-
-## 5.3 Content-based routing
-
-Let's replace our first rules with a new set. Enable the `ratings` service for a user `jason` by routing `productpage` traffic to `reviews` v2:
-
-<!-- ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
-``` -->
-In Meshery on the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route traffic to V2 of Book info reviews service for user Jason` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-This will update the existing virtual service definition for reviews to route all traffic for user `jason` to review V2.
-
-In a few, we should be able to verify the virtual service by using the command below:
-```sh
-kubectl get virtualservice reviews -o yaml
-```
-
-Output will be similar to the one below:
-```yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"reviews","namespace":"default"},"spec":{"hosts":["reviews"],"http":[{"match":[{"headers":{"end-user":{"exact":"USER_NAME"}}}],"route":[{"destination":{"host":"reviews","subset":"v2"}}]},{"route":[{"destination":{"host":"reviews","subset":"v1"}}]}]}}
-  creationTimestamp: null
-  name: reviews
-  namespace: default
-  resourceVersion: "10366"
-spec:
-  hosts:
-  - reviews
-  http:
-  - match:
-    - headers:
-        end-user:
-          exact: jason
-    route:
-    - destination:
-        host: reviews
-        subset: v2
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
----
-```
-
-Now if we login as your `jason`, you will be able to see data from `reviews` v2. While if you NOT logged in or logged in as a different user, you will see data from `reviews` v1.
-
-
-## 5.4 Canary Testing - Traffic Shifting
-
-### 5.4.1 Reset rules
-Before we start the next exercise, lets first reset the routing rules back to our 5.1 rules:
-
-<!-- ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml 
-``` -->
-
-In Meshery on the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route traffic to V1 of all Book info services` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-Once again, all traffic will be routed to `v1` of all the services. 
-
-### 5.4.2 Canary testing w/50% load
-To start canary testing, let's begin by transferring 50% of the traffic from reviews:v1 to reviews:v3 with the following command:
-
-<!-- ```sh
-kubectl apply -f  samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
-``` -->
-
-In Meshery on the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route 50% of the traffic to Book info reviews V3` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-This will update the existing virtual service definition for reviews to route 50% of all traffic to review V3.
-
-In a few, we should be able to verify the virtual service by using the command below:
-```sh
-kubectl get virtualservice reviews -o yaml
-```
-
-Output will be similar to:
-```yaml
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"reviews","namespace":"default"},"spec":{"hosts":["r
-eviews"],"http":[{"route":[{"destination":{"host":"reviews","subset":"v1"},"weight":50},{"destination":{"host":"reviews","subset":"v3"},"weight":50}]}]}}
-  creationTimestamp: null
-  name: reviews
-  namespace: default
-  resourceVersion: "11904"
-spec:
-  hosts:
-  - reviews
-  http:
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
-      weight: 50
-    - destination:
-        host: reviews
-        subset: v3
-      weight: 50
----
-```
-
-Now, if we reload the `/productpage` in your browser several times, you should now see red-colored star ratings approximately 50% of the time.
-
-
-### 5.4.3 Shift 100% to v3
-When version v3 of the reviews microservice is considered stable, we can route 100% of the traffic to reviews:v3:
-
-<!-- ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-v3.yaml
-``` -->
-
-In Meshery on the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route 100% of the traffic to Book info reviews V3` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-This will update the existing virtual service definition for reviews to route 100% of all traffic to review V3.
-
-In a few, we should be able to verify the virtual service by using the command below:
-
-```sh
-kubectl get virtualservice reviews -o yaml
-```
-Output:
-```yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"networking.istio.io/v1alpha3","kind":"VirtualService","metadata":{"annotations":{},"name":"reviews","namespace":"default"},"spec":{"hosts":["r
-eviews"],"http":[{"route":[{"destination":{"host":"reviews","subset":"v3"}}]}]}}
-  creationTimestamp: null
-  name: reviews
-  namespace: default
-  resourceVersion: "12157"
-spec:
-  hosts:
-  - reviews
-  http:
-  - route:
-    - destination:
-        host: reviews
-        subset: v3
----
-```
-
-Now, if we reload the `/productpage` in your browser several times, you should now see red-colored star ratings 100% of the time.
-
-
-## [Continue to lab 6 - Fault Injection and Rate Limiting](../lab-6/README.md)
-
-<hr />
-Alternative, manual installation steps below. No need to execute, if you have performed the steps above.
-<hr />
-
-## <a name="appendix"></a> Appendix - Manual Instructions
-
-### Default destination rules
-Run the following command to create default destination rules for the Bookinfo services:
-```sh
-kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
-```
-
-### Route all traffic to version V1 of all services
-
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml 
-```
-
-### Route all traffic to version V2 of reviews for user Jason
-
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
-```
-
-### Route 50% of traffic to version V3 of reviews service
-
-```sh
-kubectl apply -f  samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
-```
-
-### Route 100% of traffic to version V3 of reviews service
-
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-v3.yaml
-```
+Now at this point we have all the necessary debugging information which can help us to restore the application to stable/working state.

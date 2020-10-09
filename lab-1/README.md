@@ -11,9 +11,9 @@ Now that we have a Kubernetes cluster and Meshery, we are ready to download and 
 
 ## <a name="1"></a> 1 - Install Linkerd
 
-In Meshery, select the deployed Linkerd adapter in the left nav menu under the `Management` section ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio.png)).
+In Meshery, select the deployed Linkerd adapter in the left nav menu under the `Management` section ([see screenshot](img/linkerd.png)).
 
-On the Istio adapter's management page, on the `Install` card, you can click on the (+) icon and select `Latest LinkerD` to install the latest version of Istio with mTLS ([see screenshot](https://raw.githubusercontent.com/leecalcote/istio-service-mesh-workshop/feature/blend-in-meshery/lab-1/img/meshery_management_istio-install.png)).
+On the Linkerd adapter's management page, on the `Install` card, you can click on the (+) icon and select `Latest Linkerd` to install the latest version of Linkerd ([see screenshot](img/linkerd.png)).
 
 <small>For manual steps go [here](#appendix)</small>
 
@@ -52,11 +52,6 @@ Alternative, manual installation steps below. No need to execute, if you have pe
 You will download and deploy the latest Istio resources on your Kubernetes cluster. 
 
 ***Note to Docker Desktop users:*** please ensure your Docker VM has atleast 4GiB of Memory, which is required for all services to run.
-
-On your local machine:
-```sh
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.3.0 sh -
-```
 
 ### <a name="1.2"></a> 1.2 - Setting up `linkerd` CLI
 On a *nix system, you can setup istioctl by doing the following: 
