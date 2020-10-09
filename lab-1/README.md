@@ -1,6 +1,6 @@
-# Lab 1 - Deploy Istio
+# Lab 1 - Deploy Linkerd
 
-Now that we have a Kubernetes cluster and Meshery, we are ready to download and deploy Istio resources.
+Now that we have a Kubernetes cluster and Meshery, we are ready to download and deploy Linkerd resources.
 
 ## Steps
 
