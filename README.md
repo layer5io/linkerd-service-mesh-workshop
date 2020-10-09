@@ -21,7 +21,7 @@ Curriculum for Linkerd fundamentals workshop. All training resources are availab
 
 ## Segment 5
 ### Observability
-- [Lab 6 - Telemetry](lab-6/README.md)
+- [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
 
 ## Segment 6
 ### Traffic Control
