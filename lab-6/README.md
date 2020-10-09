@@ -1,27 +1,16 @@
 # Lab 6 - Linkerd Telemetry & Distributed Tracing
 
-In this lab we will learn how to test the resiliency of an application by injecting systematic faults.
+## 6.1 - Linkerd Telemetry
 
-<!-- Before we start let us reset the route rules: -->
+Linkerd's telemetry and monitoring features function automatically, without requiring any work on the part of the developer.
 
-<!-- ```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml 
-``` -->
-Before we start, we will need to reset the virtual services.
+We have already looked at Linkerd Telemetry, not by name but by concept. Using stat, top and tap is one of the major and characterstic feature which Linkerd offers out of the box. All of this metrics are also accessible through Grafana Dashboard which Linkerd provides.
 
-In Meshery in the browser, navigate to the Istio adapter's management page from the left nav menu again.
+Accessing Grafana Dashboard for each service in Linkerd :
+- Start `linkerd dashboard` & navigate over the service you would want to see Grafana Dashboard for.
+- In the last column, click of the `Grafana Icon` to access the metrics dashboard for the following deployment.
 
-On the Istio adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Configure` card and select `Route traffic to V2 of Book info reviews service for user Jason` from the list. 
-
-<small>Manual step for can be found [here](#appendix)</small>
-
-<!-- 
-```sh
-kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
-``` -->
-
-## 6.1 Inject a route rule to create a fault using HTTP delay
+## 6.2 Distributed tracing with Linkerd
 
 To start, we will inject a 7s delay for accessing the ratings service for a user `jason`. reviews v2 service has a 10s hard-coded connection timeout for its calls to the ratings service configured globally.
 
