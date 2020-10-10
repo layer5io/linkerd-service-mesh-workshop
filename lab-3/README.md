@@ -1,4 +1,4 @@
-# Lab 3 - Access Bookinfo site through Istio Ingress Gateway
+# Lab 3 - Ingressing and Egressing with Linkerd
 
 The components deployed on the service mesh by default are not exposed outside the cluster.
 
@@ -15,11 +15,14 @@ We will be using Nginx ingress gateway with Linkerd in this workshop.
 ## 3.2 Installing Nginx ingress controller/gateway
 
 **Pre-requisites**
+
 - Kubernetes (already set-up)
 - Helm
 
 **Installation**
+
 - Install Ingress Controller using
+
 ```sh
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm install my-release ingress-nginx/ingress-nginx
@@ -27,7 +30,8 @@ helm install my-release ingress-nginx/ingress-nginx
 
 ## 3.3 Setting up ingress controller with the sample application deployed
 
-Apply the following ingress definition to your cluster 
+Apply the following ingress definition to your cluster
+
 ```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -42,15 +46,16 @@ metadata:
 
 spec:
   rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          serviceName: web-svc
-          servicePort: 80
+    - host: example.com
+      http:
+        paths:
+          - backend:
+              serviceName: web-svc
+              servicePort: 80
 ```
 
-The important definition in the above written definition is 
+The important definition in the above written definition is
+
 ```sh
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
@@ -60,7 +65,8 @@ The important definition in the above written definition is
 This example combines the two directives that NGINX uses for proxying HTTP and gRPC traffic. In practice, it is only necessary to set either the proxy_set_header or grpc_set_header directive, depending on the protocol used by the service, however NGINX will ignore any directives that it doesn't need.
 Nginx will add a l5d-dst-override header to instruct Linkerd what service the request is destined for. You'll want to include both the Kubernetes service FQDN (web-svc.emojivoto.svc.cluster.local) and the destination servicePort.
 
-To test this, you need to get the external IP of your controller which you can get by running 
+To test this, you need to get the external IP of your controller which you can get by running
+
 ```sh
 kubectl get svc --all-namespaces \
   -l app=nginx-ingress,component=controller \
@@ -68,7 +74,9 @@ kubectl get svc --all-namespaces \
 ```
 
 You can now curl to your service without using port-forward
+
 ```sh
 curl -H "Host: example.com" http://{external-ip}
 ```
+
 ## [Continue to lab 4 - Exploring Linkerd Web](../lab-4/README.md)
