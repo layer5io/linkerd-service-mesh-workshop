@@ -4,10 +4,9 @@ Now that we have a Kubernetes cluster and Meshery, we are ready to download and 
 
 ## Steps
 
-* [1. Install Linkerd](#1)
-* [2. Verify install](#2)
-* [3. Confirm add-ons](#3)
-
+- [1. Install Linkerd](#1)
+- [2. Verify install](#2)
+- [3. Confirm add-ons](#3)
 
 ## <a name="1"></a> 1 - Install Linkerd
 
@@ -27,12 +26,12 @@ linkerd check
 
 ## <a name="3"></a> 3 - Enforce mTLS strict mode
 
-By default, Linkerd automatically enables mutual Transport Layer Security (mTLS) for most HTTP-based communication between meshed pods, by establishing and authenticating secure, private TLS connections between Linkerd proxies.ntication.security.istio.io/default created
-
+By default, Linkerd automatically enables mutual Transport Layer Security (mTLS) for most HTTP-based communication between meshed pods, by establishing and authenticating secure, private TLS connections between Linkerd proxies.
 
 ## <a name="4"></a> 4 - Confirming Add-ons
-	
+
 Linkerd, as part of this workshop, is installed with several optional addons like:
+
 1. [Prometheus](https://prometheus.io/)
 2. [Grafana](https://grafana.com/)
 3. [Jaeger](https://www.jaegertracing.io/)
@@ -49,27 +48,32 @@ Alternative, manual installation steps below. No need to execute, if you have pe
 ## <a name="appendix"></a> Appendix - Alternative Manual Install
 
 ### <a name="1.1"></a> 1.1 - Download Linkerd
-You will download and deploy the latest Istio resources on your Kubernetes cluster. 
 
-***Note to Docker Desktop users:*** please ensure your Docker VM has atleast 4GiB of Memory, which is required for all services to run.
+You will download and deploy the latest Linkerd resources on your Kubernetes cluster.
+
+**_Note to Docker Desktop users:_** please ensure your Docker VM has atleast 4GiB of Memory, which is required for all services to run.
 
 ### <a name="1.2"></a> 1.2 - Setting up `linkerd` CLI
-On a *nix system, you can setup istioctl by doing the following: 
+
+On a \*nix system, you can setup `linkerd` by doing the following:
 
 The above command will get the latest Linkerd package and untar it in the same folder.
 
-Change into the Istio package directory and add the `linkerd` client to your PATH environment variable.
+Change into the Linkerd package directory and add the `linkerd` client to your PATH environment variable.
+
 ```sh
 curl -sL https://run.linkerd.io/install | sh
 export PATH=$PATH:$HOME/.linkerd2/bin
 ```
 
 Alternatively, on MacOS you can sue `HomeBrew` to install `linkerd`
+
 ```sh
 brew install linkerd
 ```
 
-To verify `istioctl` is setup lets try to print out the command help
+To verify `linkerd` is setup lets try to print out the command help
+
 ```sh
 linkerd version
 ```
@@ -80,14 +84,16 @@ We can use a new feature in linkerd to check if the cluster is ready for install
 linkerd check --pre
 ```
 
-### Install istio:
+### Install Linkerd:
 
 Deploy Linkerd custom resources:
+
 ```sh
 linkerd install | kubectl apply -f -
 ```
 
 Use the following command to see the progress on the installation of Linkerd custom CRDs and components
+
 ```sh
 linkerd check
 ```
