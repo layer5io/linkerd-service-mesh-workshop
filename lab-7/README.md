@@ -23,7 +23,7 @@ linkerd inject ./sample/bookinfo.yaml | kubectl apply -f -
 
 This will give you the if the Linkerd injection was successful or not.
 ```sh
-linkerd stat deployments -n bookinfo
+linkerd stat deploy
 ```
 
 You will see the following services running in your cluster 
@@ -77,7 +77,7 @@ Now, let's apply traffic-split CRD from SMI :
 apiVersion: split.smi-spec.io/v1alpha1
 kind: TrafficSplit
 metadata:
-  name: reviews-rollout
+  name: reviews-split
 spec:
   service: reviews
   backends:
@@ -90,3 +90,14 @@ spec:
 This tells Linkerd’s control plane that whenever there are requests to the reviews service, to split them across the `reviews-v1` and `reviews-v2` based on the weights provided. 
 
 If we now go back to our product page, we can only see the reviews with orange or no stars appear on each refresh.
+
+## Cleanup
+```sh
+kubectl delete trafficsplit/reviews-split
+kubectl delete -f ./sample/service.yaml
+```
+
+- Remove the bookinfo application from the `Meshery Dashboard` by clicking on the `trash icon` in the `sample application` card on the linkerd adapters' page.
+
+
+## [Continue to Lab 8 - Fault Injection using SMI](lab-8/README.md)

@@ -1,170 +1,150 @@
-# Lab 8 - Mutual TLS & Identity Verification
+# Lab 8 - Fault Injection using SMI in Linkerd
 
-Istio provides transparent mutual TLS to services inside the service mesh where both the client and the server authenticate each others' certificates as part of the TLS handshake. As part of this workshop, we have deployed Istio with mTLS.
+Application failure injection is a form of chaos engineering where we artificially increase the error rate of certain services in a microservice application to see what impact that has on the system as a whole. Traditionally, you would need to add some kind of failure injection library into your service code in order to do application failure injection. Thankfully, the service mesh gives us a way to inject application failures without needing to modify or rebuild our services at all.
 
-By default istio sets mTLS in `PERMISSIVE` mode which allows plain text traffic to be sent and accepted by a mesh. We first disallow plain text traffic using `PeerAuthentication` and setting mTLS mode to STRICT.
+## Using SMI Traffic Split API to inject errors
 
-## Confirm mTLS is being enforced
-This can be easily done by executing a simple command:-
+We can easily inject application failures by using the Traffic Split API of the Service Mesh Interface. This allows us to do failure injection in a way that is implementation agnostic and works across service meshes.
+
+We will do this first by deploying a new service which only return errored responses. We will be using a simple NGINX service which has configured to only return HTTP 500 responses. 
+
+We will hten create a traffic split which would redirect the service mesh to send a sample percentage of traffic to the error service instead, let's say 20% of service's traffic to error, then we would have injected an artificial 20% error rate in service.
+
+
+### Deploy Linkerd Books Application
+
+We will be deploying [Linkerd Books application](https://github.com/BuoyantIO/booksapp) for this part of the demo
+
+Use meshery to deploy the bookinfo application :
+- In Meshery, navigate to the Linkerd adapter's management page from the left nav menu.
+- On the Linkerd adapter's management page, please enter `default` in the `Namespace` field.
+- Then, click the (+) icon on the `Sample Application` card and select `Books Application` from the list.
+
+Inject linkerd into sample application using 
 ```sh
-kubectl get peerauthentication --all-namespaces
+linkerd inject https://run.linkerd.io/booksapp.yml | kubectl apply -f -
 ```
 
-## 8.1 Verify mTLS
-Citadel is Istio’s key management service. As a first step, confirm that Citadel is up and running:
+In the following, one of the service has already beeen configured with the error let's remove the error rate from the same :
 ```sh
-kubectl get deploy -l istio=citadel -n istio-system
-```
-Output will be similar to:
-```
-NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-istio-citadel   1/1     1            1           3m23s
+kubectl edit deploy/authors
 ```
 
-To experiment with mTLS, let's do so by logging into the sidecar proxy of the `productpage` pod by executing this command:
+Remove the lines 
 ```sh
-kubectl exec -it $(kubectl get pod | grep productpage | awk '{ print $1 }') -c istio-proxy -- /bin/bash
+       - name: FAILURE_RATE
+         value: "0.5
 ```
 
-We are now in the proxy of the `productpage` pod. Check that all the ceritificates are loaded in this proxy:
+Now if you will see `linkerd stat`, the success rate would be 100%
 ```sh
-ls /etc/certs/
+linkerd stat deploy
 ```
 
-You should see 3 entries:
-```sh
-cert-chain.pem  key.pem  root-cert.pem
-```
+### Create the errored service
 
-Now, try to make a curl call to the `details` service over HTTP:
-```sh
-curl http://details:9080/details/0
-```
-
-Since, we have TLS between the sidecar's, an HTTP call will not work. The request will timeout. You will see an error like the one below:
-```sh
-curl: (7) Failed to connect to details port 9080: Connection timed out
-```
-
-Let us try to make a curl call to the details service over HTTPS but **WITHOUT** certs:
-```sh
-curl https://details:9080/details/0 -k
-```
-
-The request will be denied and you will see an error like the one below:
-```sh
-curl: (16) SSL_write() returned SYSCALL, errno = 104
-```
-
-Now, let us use curl over HTTPS with certificates to the details service:
-```sh
-curl https://details:9080/details/0 -v --key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
-```
-
-Output will be similar to this:
-```sh
-*   Trying 10.107.35.26...
-* Connected to details (10.107.35.26) port 9080 (#0)
-* found 1 certificates in /etc/certs/root-cert.pem
-* found 0 certificates in /etc/ssl/certs
-* ALPN, offering http/1.1
-* SSL connection using TLS1.2 / ECDHE_RSA_AES_128_GCM_SHA256
-*        server certificate verification SKIPPED
-*        server certificate status verification SKIPPED
-* error fetching CN from cert:The requested data were not available.
-*        common name:  (does not match 'details')
-*        server certificate expiration date OK
-*        server certificate activation date OK
-*        certificate public key: RSA
-*        certificate version: #3
-*        subject: O=#1300
-*        start date: Thu, 26 Oct 2018 14:36:56 GMT
-*        expire date: Wed, 05 Jan 2019 14:36:56 GMT
-*        issuer: O=k8s.cluster.local
-*        compression: NULL
-* ALPN, server accepted to use http/1.1
-> GET /details/0 HTTP/1.1
-> Host: details:9080
-> User-Agent: curl/7.47.0
-> Accept: */*
->
-< HTTP/1.1 200 OK
-< content-type: application/json
-< server: envoy
-< date: Thu, 07 Jun 2018 15:19:46 GMT
-< content-length: 178
-< x-envoy-upstream-service-time: 1
-< x-envoy-decorator-operation: default-route
-<
-* Connection #0 to host details left intact
-{"id":0,"author":"William Shakespeare","year":1595,"type":"paperback","pages":200,"publisher":"PublisherA","language":"English","ISBN-10":"1234567890","ISBN-13":"123-1234567890"}
-```
-
-This proves the existence of mTLS between the services on the Istio mesh.
-
-Now lets come out of the container before we go to the next section:
-
-```sh
-exit
-```
-
-
-## 8.2 [Secure Production Identity Framework for Everyone (SPIFFE)](https://spiffe.io/)
-
-Istio uses [SPIFFE](https://spiffe.io/) to assert the identify of workloads on the cluster. SPIFFE consists of a notion of identity and a method of proving it. A SPIFFE identity consists of an authority part and a path. The meaning of the path in spiffe land is implementation defined. In k8s it takes the form `/ns/$namespace/sa/$service-account` with the expected meaning. A SPIFFE identify is embedded in a document. This document in principle can take many forms but currently the only defined format is x509.
-
-
-To start our investigation, let us check if the certs are in place in the productpage sidecar:
-```sh
-kubectl exec $(kubectl get pod -l app=productpage -o jsonpath={.items..metadata.name}) -c istio-proxy -- ls /etc/certs
-```
-Output will be similar to:
-```sh
-cert-chain.pem
-key.pem
-root-cert.pem
-```
-
-Mac users, MacOS should have openssl available. If your machine does not have openssl install, install it using your preferred method.
-
-Here is one way to install it on RHEL or CentOS or its derivatives:
-```sh
-sudo yum install -y openssl-devel
-```
-
-Here is one way to install it on Ubuntu or Debian or its derivatives:
-```sh
-sudo apt install -y libssl-dev
-```
-
-Now that we have found the certs, let us verify the certificate of productpage sidecar by running this command:
-```sh
-kubectl exec $(kubectl get pod -l app=productpage -o jsonpath={.items..metadata.name}) -c istio-proxy -- cat /etc/certs/cert-chain.pem | openssl x509 -text -noout  | grep Validity -A 2
-```
-
-Output will be similar to:
-```sh
-    Not Before: Sep 23 17:32:28 2019 GMT
-    Not After : Dec 22 17:32:28 2019 GMT
-```
-
-Lets also verify the URI SAN:
-```sh
-kubectl exec $(kubectl get pod -l app=productpage -o jsonpath={.items..metadata.name}) -c istio-proxy -- cat /etc/certs/cert-chain.pem | openssl x509 -text -noout  | grep 'Subject Alternative Name' -A 1
-```
-
-Output will be similar to:
-```sh
-X509v3 Subject Alternative Name: critical
-    URI:spiffe://cluster.local/ns/default/sa/bookinfo-productpage
-```
-You can see that the subject isn't what you'd normally expect, URI SAN extension has a `spiffe` URI.
-
-This wraps up this lab and training. Thank you for attending!
-
+Now we will create our error service, we have NGINX pre-configured to only respond with HTTP 500 status code 
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: error-injector
+  labels:
+    app: error-injector
+spec:
+  selector:
+    matchLabels:
+      app: error-injector
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: error-injector
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+            name: nginx
+            protocol: TCP
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: error-injector-config
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: error-injector
+  name: error-injector
+spec:
+  clusterIP: None
+  ports:
+  - name: service
+    port: 7002
+    protocol: TCP
+    targetPort: nginx
+  selector:
+    app: error-injector
+  type: ClusterIP
+---
+apiVersion: v1
+data:
+ nginx.conf: |2
 
-# Additional Resources
-For future updates and additional resources, check out [layer5.io](https://layer5.io).
+    events {
+        worker_connections  1024;
+    }
 
-Join the Layer5 service mesh community on [Slack](http://slack.layer5.io) or point questions to [@Layer5](https://twitter.com/layer5) on Twitter.
+    http {
+        server {
+            location / {
+                return 500;
+            }
+        }
+    }
+kind: ConfigMap
+metadata:
+  name: error-injector-config
+```
+
+After deploying the above errored service, we will create a traffic split resource which will be responsible to direct 20% of the book service to the error. 
+
+```yaml
+apiVersion: split.smi-spec.io/v1alpha3
+kind: TrafficSplit
+metadata:
+  name: fault-inject
+spec:
+  service: books
+  backends:
+  - service: books
+    weight: 800m
+  - service: error-injector
+    weight: 200m
+```
+
+You can now see an 20% error rate for calls from webapp to books 
+```sh
+linkerd routes deploy/webapp --to service/books
+```
+
+You can also see the error on the web browser
+```sh
+kubectl port-forward deploy/webapp 7000 && open http://localhost:7000
+```
+
+If you refresh page few times, you will see `Internal Server Error`.
+
+## Cleanup
+```sh
+kubectl delete trafficsplit/error-split
+```
+
+- Remove the book info application from the `Meshery Dashboard` by clicking on the `trash icon` in the `sample application` card on the linkerd adapters' page.
