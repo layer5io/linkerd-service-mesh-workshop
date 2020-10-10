@@ -8,12 +8,12 @@ You will need each of the following in order to complete the workshop:
 
 ## Install Docker and Create a Kubernetes Cluster<a name="1"></a>
 
-This training requires access to a Kubernetes cluster and uses Docker Desktop and Minikube as the example Kubernetes platforms. Alternatively, you may choose to use any of the other [supported Kubernetes platform](https://meshery.layer5.io/docs/installation/platforms).
+You will access to a Kubernetes cluster in this training. While any Kubernetes cluster _should_ work, instructions for Docker Desktop and Minikube are included in these labs as the example Kubernetes platforms. Alternatively, you may choose to use any of the other [supported Kubernetes platform](https://github.com/layer5io/meshery#run-meshery).
 
 ### Setup Docker Desktop (MacOS and Windows)
 
 1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
-   1. Ensure 4GB is allocated to your Docker Desktop VM in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/docker-desktop-memory.png)).
+   1. Ensure 4GB is allocated to your Docker Desktop VM in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-memory.png)).
 1. Create Kubernetes cluster:Enable Kubernetes in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/docker-desktop-kube.png)).
 1. Please open `~/.kube/config` and check the `docker-desktop` cluster under `clusters` section and ensure you see something like the image below:
    ![](img/docker-desktop-config.png)
