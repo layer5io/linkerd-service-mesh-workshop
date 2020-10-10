@@ -90,3 +90,5 @@ Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if yo
 ```sh
 kubectl delete ns tracing emojivoto
 ```
+
+## [Continue to Lab 7 - Traffic Splitting using SMI](../lab-7/README.md)
