@@ -156,7 +156,7 @@ kubectl -n emojivoto port-forward svc/web-svc 8080:80
 
 ### Deploy Emojivoto
 
-Applying this yaml file included in the Istio package you collected in https://run.linkerd.io/emojivoto.yml will deploy the Book info app in you cluster.
+Applying this yaml file included in the Linkerd package you collected in https://run.linkerd.io/emojivoto.yml will deploy the sample app into your cluster.
 
 ```sh
 kubectl apply -f https://run.linkerd.io/emojivoto.yml

@@ -1,28 +1,33 @@
 ### <a name="manual"></a> Lab 3 Appendix: Deploying Sample App with manual sidecar injection
 
-To do a manual sidecar injection we will be using `istioctl` command:
+To do a manual sidecar injection we will be using `linkerd` command:
 
 ```sh
-curl https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml | istioctl kube-inject -f - > newBookInfo.yaml
+kubectl get -n emojivoto deploy -o yaml \
+  | linkerd inject - > newEmojivoto.yaml
 ```
 
-Observing the new yaml file reveals that additional container Istio Proxy has been added to the Pods with necessary configurations:
+Observing the new yaml file reveals that additional container Linkerd Proxy has been added to the Pods with necessary configurations:
 
 ```
-        image: docker.io/istio/proxyv2:1.3.0
-        imagePullPolicy: IfNotPresent
-        name: istio-proxy
+    template:
+      metadata:
+        annotations:
+          linkerd.io/inject: enabled
 ```
 
 We need to now deploy the new yaml using `kubectl`
+
 ```sh
-kubectl apply -f newBookInfo.yaml
+kubectl apply -f newEmojivoto.yaml
 ```
 
 To do both in a single command:
 
 ```sh
-kubectl apply -f <(curl https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml | istioctl kube-inject -f -)
+kubectl get -n emojivoto deploy -o yaml \
+  | linkerd inject - \
+  | kubectl apply -f -
 ```
 
-Now continue to [Verify Bookinfo deployment](README.md#verify).
+Continue to [Lab 3](../lab-3/README.md).

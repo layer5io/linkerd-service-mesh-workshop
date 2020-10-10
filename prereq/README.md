@@ -14,7 +14,7 @@ You will access to a Kubernetes cluster in this training. While any Kubernetes c
 
 1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
    1. Ensure 4GB is allocated to your Docker Desktop VM in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-memory.png)).
-1. Create Kubernetes cluster:Enable Kubernetes in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/docker-desktop-kube.png)).
+1. Create Kubernetes cluster:Enable Kubernetes in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-kube.png)).
 1. Please open `~/.kube/config` and check the `docker-desktop` cluster under `clusters` section and ensure you see something like the image below:
    ![](img/docker-desktop-config.png)
 
@@ -83,6 +83,10 @@ curl -L https://git.io/meshery | bash -
 
 ### [Windows](https://meshery.layer5.io/docs/installation#using-docker-on-windows)
 
+1. Use Scoop.
+
+or
+
 1. Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page.
 1. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
@@ -96,17 +100,17 @@ Upon starting Meshery successfully, instructions to access Meshery will be print
 
 Meshery will automatically launch in your browser.
 
-Sign into Meshery ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/sign-into-meshery.png)) using either Twitter, Linkedin, GitHub or Google authentication.
+Sign into Meshery ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/sign-into-meshery.png)) using either Twitter, Linkedin, GitHub or Google authentication.
 
-Meshery attempts to automatically connect with your Kubernetes cluster by loading the kubeconfig found in your `$HOME/.kube` folder and connecting existing service mesh adapters ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/meshery_landing_page.png)).
+Meshery attempts to automatically connect with your Kubernetes cluster by loading the kubeconfig found in your `$HOME/.kube` folder and connecting existing service mesh adapters ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_landing_page.png)).
 
-If your kubeconfig is in a different location (i.e. if you're using minikube, not Docker Desktop), point Meshery to your kubeconfig location by navigating to the Settings page. Navigate to Settings by clicking the gear icon on the right top of the screen ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/meshery_landing_page_settings_icon.png)).
+If your kubeconfig is in a different location (i.e. if you're using minikube, not Docker Desktop), point Meshery to your kubeconfig location by navigating to the Settings page. Navigate to Settings by clicking the gear icon on the right top of the screen ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_landing_page_settings_icon.png)).
 
 This will take the user to the `Settings` page and here you can load up your new config file and select the context to use ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/meshery_settings_page.png)).
 
-In a similar fashion, if you don't see the Istio adapter loaded, you should be able to switch to the `Service Meshes` tab in the `Settings` page and connect to existing adapters from the drop down ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/meshery_settings_page-service-meshes.png)).
+In a similar fashion, if you don't see the Linkerd adapter loaded, you should be able to switch to the `Service Meshes` tab in the `Settings` page and connect to existing adapters from the drop down ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_settings_page-service-meshes.png)).
 
-Once an adapter is connected, you will also see it added to the nav menu on the left ([see screenshot](https://github.com/layer5io/linkerd-service-mesh-workshop/raw/feature/blend-in-meshery/prereq/img/meshery_settings_page-service_meshes_with_menu.png)).
+Once an adapter is connected, you will also see it added to the nav menu on the left ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_settings_page-service_meshes_with_menu.png)).
 
 In the labs, you will use a combination of Meshery's UI and your terminal. We suggest splitting the view on your display between your terminal and your web browser, so that you don't have to switch between apps frequently.
 
