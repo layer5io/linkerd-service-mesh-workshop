@@ -12,8 +12,9 @@ Accessing Grafana Dashboard for each service in Linkerd :
 
 ## 6.2 Distributed tracing with Linkerd
 
-The first step of getting distributed tracing setup is installing a collector onto your cluster. This component consists of “receivers” that consume spans emitted from the mesh and your applications as well as “exporters” that convert spans and forward them to a backend.
-Linkerd now has add-ons which enables users to install extra components that integrate well with Linkerd. Tracing is such one add-on which includes OpenCensus Collector and Jaeger.
+Linkerd added support for Distributed Tracing, which means that if your application has enabled tracing based on B3 Propagation, Linkerd proxies would automatically recognize that (as the trace-id is propogated through http headers) and send their spans, provided that the proxies are configured regarding the meshed trace collector endpoint.
+
+A service mesh would not be able to give you traces automatically though its in the request-response path, as it can’t map a inbount request to the corresponding outbound requests. So, It is needed for the application to be instrumented. In languages like Golang, where there is ctx.Context primitive used widely already, Instrumentation is very easy as the changes required here are to update the application server to generate the trace-id header and then make sure to pass the ctx.Context everywhere and use it when sending outbound requests. This is required as the Trace collector, needs a way to map inbound to outbound requests. This is done by using the metadata passed through the context. 
 
 To enable tracing onto your cluster :
 ```sh
@@ -25,14 +26,10 @@ EOF
 
 This configuration file can also be used to apply Add-On configuration (not just specific to tracing Add-On).
 
-Now, the above configuration can be applied using the --addon-config file with CLI :
+Let us apply that configuration to the linkerd upgrade command using the --addon-config flag and pipe that output to kubectl apply.
 ```sh
 linkerd upgrade --addon-config config.yaml | kubectl apply -f -
 ```
-
-You will now have a linker-collector and linkerd-jaeger deployments in the linkerd namespace that are running as part of the mesh. Collector has been configured to:
-- Receive spans from OpenCensus clients
-- Export spans to a Jaeger backend
 
 Before moving onto the next step, make sure everything is up and running with kubectl:
 ```sh
@@ -54,28 +51,44 @@ spec:
 '
 ```
 
+
 Before moving onto the next step, make sure everything is up and running with kubectl:
 ```sh
 kubectl -n emojivoto rollout status deploy/web
 ```
 
-Unlike most features of a service mesh, distributed tracing requires modifying the source of your application. Tracing needs some way to tie incoming requests to your application together with outgoing requests to dependent services. To do this, some headers are added to each request that contain a unique ID for the trace. Linkerd uses the b3 propagation format to tie these things together. Emojivoto application already incorporates all of such changes.
+The above command enables tracing in the linkerd proxies but the application containers still don’t have it enabled. Tracing can be enabled in the sample application can be enabled by
 
 To enable tracing in emojivoto, run:
 ```sh
-kubectl -n emojivoto set env --all deploy OC_AGENT_HOST=linkerd-collector.linkerd:55678
+ kubectl -n emojivoto set env --all deploy OC_AGENT_HOST=linkerd-collector.linkerd:55678
 ```
 
 ## 6.3 Explore Jaeger
 
-With `vote-bot` starting traces for every request, spans should now be showing up in Jaeger. To get to the UI, start a port forward and send your browser to http://localhost:16686.
+Now, you can port-forward the `linkerd-jaeger` service to checkout the traces.
+
 ```sh
-kubectl -n linkerd port-forward svc/linkerd-jaeger 16686
+kubectl -n linkerd port-forward svc/linkerd-jaeger 16686:16686
 ```
 
-You can look for any service in the dropdown and click Find Traces. `vote-bot` is an incredible way to begin exploring the jaeger dashboard.
+Now let's explore traces of the `vote-bot` endpoint :
 
+<img align="center" style="margin-bottom:20px;" src="img/emojivoto-tracing.png"  width="70%" />
+
+So, As you can see there are spans of the linkerd-proxy. For each request between two meshed components, you can see there are four linkerd-proxy spans.
+
+The first two spans would be the spans sent from the proxy of the client component and will be marked as outbound. Again, in these two spans, the first one is the span of the application -> proxy, and the second one is the proxy->otherside. They are differentiated by the server and client tags respectively.
+
+## 6.4 Jaeger & Linkerd
+
+In Linkerd, as told above Grafana Integration is present in the `linkerd-web` ui through which which you can directly jump onto the dashboards of any workload like deployment, pod, etc.
+
+Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if you navigate to `linkerd-web` ui you should see jaeger icon in the extreme right.
+<img align="center" style="margin-bottom:20px;" src="img/linkerd-jaeger-ui.png"  width="70%" />
 **Cleanup the tracing components**
 ```sh
 kubectl delete ns tracing emojivoto
 ```
+
+## [Continue to Lab 7 - Traffic Splitting using SMI](../lab-7/README.md)
