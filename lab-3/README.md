@@ -6,9 +6,7 @@ For reasons of effortlessness, Linkerd doesn't give its own ingress controller. 
 
 ## 3.1 How to use Ingress with Linkerd
 
-If you're planning on injecting Linkerd into your ingress controller's pods there is some configuration required. Linkerd discovers services based on the :authority or Host header. This allows Linkerd to understand what service a request is destined for without being dependent on DNS or IPs.
-
-When it comes to ingress, most controllers do not rewrite the incoming header (example.com) to the internal service name (example.default.svc.cluster.local) by default. In this case, when Linkerd receives the outgoing request it thinks the request is destined for example.com and not example.default.svc.cluster.local. This creates an infinite loop that can be pretty frustrating!
+In case you're anticipating infusing Linkerd into your ingress controller's pods there is some setup required. Linkerd discovers services dependent on the :authority or Host header. This permits Linkerd to comprehend what service a request is bound for without being subject to DNS or IPs.
 
 We will be using Nginx ingress gateway with Linkerd in this workshop.
 
@@ -17,15 +15,18 @@ We will be using Nginx ingress gateway with Linkerd in this workshop.
 **Pre-requisites**
 
 - Kubernetes (already set-up)
-- Helm
 
 **Installation**
 
-- Install Ingress Controller using
+- Install Ingress Controller using (For Docker-Desktop)
 
 ```sh
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm install my-release ingress-nginx/ingress-nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
+```
+
+- Install Ingress Controller using (For Minikube)
+```sh
+minikube addons enable ingress
 ```
 
 ## 3.3 Setting up ingress controller with the sample application deployed
@@ -62,8 +63,9 @@ The important definition in the above written definition is
       grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
 ```
 
-This example combines the two directives that NGINX uses for proxying HTTP and gRPC traffic. In practice, it is only necessary to set either the proxy_set_header or grpc_set_header directive, depending on the protocol used by the service, however NGINX will ignore any directives that it doesn't need.
-Nginx will add a l5d-dst-override header to instruct Linkerd what service the request is destined for. You'll want to include both the Kubernetes service FQDN (web-svc.emojivoto.svc.cluster.local) and the destination servicePort.
+This model joins the two mandates that NGINX utilizes for proxying HTTP and gRPC traffic. Practically speaking, it is just important to set either the proxy_set_header or grpc_set_header mandate, contingent upon the protocol utilized by the administration, anyway NGINX will overlook any orders that it needn't bother with. 
+
+Nginx will include a l5d-dst-abrogate header to train Linkerd what administration the solicitation is bound for. You'll need to incorporate both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the objective servicePort.
 
 To test this, you need to get the external IP of your controller which you can get by running
 

@@ -7,8 +7,8 @@ Let's jump into debugging the Emojivoto application right away.
 
 ## 5.1 Exploring the Linkerd Web
 
-If you glance at the Linkerd dashboard (by running the linkerd dashboard command), you should see all the resources in the emojivoto namespace, including the deployments. Each deployment running Linkerd shows success rate, requests per second and latency percentiles.
-You might notice is that the success rate is well below 100%! Let's debug this further & click on the web component.
+In the event that you look at the Linkerd dashboard (by running the linkerd dashboard command), you should see all the resources in the emojivoto namespace, including the deployments. Every deployments running Linkerd shows success rate, requests per second and latency percentiles.
+If you see closely, you will observe success rate is below 100% because of some buggy endpoint present in the service.
 
 <img align="center" style="margin-bottom:20px;" src="img/octopus.png"  width="70%" />
 
@@ -22,14 +22,19 @@ Scrolling down a little from the deployment page, we'll see a live list of all t
 
 <img align="center" style="margin-bottom:20px;" src="img/web-top.png"  width="70%" />
 
-There are two calls that are not at 100%: the first is vote-bot's call to the `/api/vote` endpoint. The second is the `VoteDoughnut` call from the web deployment to its dependent deployment, voting.
-Since `/api/vote` is an incoming call, and `VoteDoughnut` is an outgoing call, this is a good clue that this endpoint is what's causing the problem!
+There are two calls that are not at 100%: the first is vote-bot's call to the '/api/vote' endpoint. The second is the 'VoteDoughnut' call from the web organization to its needy arrangement, casting a ballot. 
 
+Since '/api/vote' is an approaching call, and 'VoteDoughnut' is an active call, this is a decent sign that this endpoint is what's causing the issue! 
 
-To dig a little deeper, we can click on the tap icon in the far right column. This will take us to the live list of requests that match only this endpoint. You'll see `Unknown under the GRPC status column`. 
+To burrow somewhat more profound, we can click on the `tap` symbol in the extreme right section. This will take us to the live rundown of requests that match just this endpoint. You'll see 'Unknown under the GRPC status section'.
 
 <img align="center" style="margin-bottom:20px;" src="img/web-tap.png"  width="70%" />
 
-This is because the requests are failing with a [gRPC status code 2](https://godoc.org/google.golang.org/grpc/codes#Code), which is a common error response. Linkerd is aware of gRPC's response classification without any other configuration.
+This is because the requests are failing with a [gRPC status code 2](https://godoc.org/google.golang.org/grpc/codes#Code), which is a common error response. 
+
+*Note: Linkerd is aware of gRPC's response classification without any other configuration.*
 
 Now at this point we have all the necessary debugging information which can help us to restore the application to stable/working state.
+
+
+## [Continue to Lab 6 - Telemetry & Distributed Tracing](../lab-6/README.md)

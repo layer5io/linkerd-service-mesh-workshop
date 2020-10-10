@@ -114,15 +114,23 @@ Once an adapter is connected, you will also see it added to the nav menu on the 
 
 In the labs, you will use a combination of Meshery's UI and your terminal. We suggest splitting the view on your display between your terminal and your web browser, so that you don't have to switch between apps frequently.
 
-<!-- ### <span style="color:gray">Alternatively - Run Meshery In-Cluster</span>
+## Install Linkerd-CLI
 
-<p style="color:gray">
-Or to install on Kubernetes by cloning the Meshery repo:</p>
+Install linkerd cli into your local system using :
+```sh
+curl -sL https://run.linkerd.io/install | sh
+export PATH=$PATH:$HOME/.linkerd2/bin
+```
+If you are on MacOS, you can use homebrew to install Linkerd cli:
+```sh
+brew install linkerd
+```
 
- ```
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create ns meshery
- $ kubectl -n meshery apply -f deployment_yamls/k8s
-``` -->
+To verify if the cli was successfully installed:
+```sh
+linkerd version
+```
+
+
 
 # [Continue to Lab 1 - Deploy Linkerd](../lab-1/README.md)
