@@ -112,15 +112,24 @@ This will do 3 things:
    kubectl -n emojivoto describe service svc/web-svc
    ```
 
+Let's look at the application deployment by port-forwarding the web-service:
+```sh
+kubectl -n emojivoto port-forward svc/web-svc 8080:80
+```
+
 #### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
 
 The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from linkerd service mesh.
 Now we will be injecting linkerd into our sample application
 
 ```sh
-kubectl get -n emojivoto deploy -o yaml \
- | linkerd inject - \
- | kubectl apply -f -
+kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
+spec:
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+'
 ```
 
 This command retrieves all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
@@ -131,7 +140,9 @@ You've now added Linkerd to existing services! Just as with the control plane, i
 linkerd -n emojivoto check --proxy
 ```
 
-## [Continue to Lab 3 - Access Linkerd via Linkerd Web](../lab-3/README.md)
+Linkerd, in contrast to istio annotates the resources (namespaces, deployment workloads) rather than labelling them.
+
+## [Continue to Lab 3 - Using Ingress with Linkerd](../lab-3/README.md)
 
 <hr />
 Alternative, manual installation steps below. No need to execute, if you have performed the steps above.

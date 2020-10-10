@@ -39,7 +39,7 @@ Linkerd, as part of this workshop, is installed with several optional addons lik
 
 You will use Prometheus and Grafana for collecting and viewing metrics, while for viewing distributed traces, you can choose between [Jaeger](https://www.jaegertracing.io/). In this training, we will use Jaeger.
 
-## [Continue to Lab 2 - Deploy Sample Bookinfo app](../lab-2/README.md)
+## [Continue to Lab 2 - Deploy Sample Emojivoto app](../lab-2/README.md)
 
 <hr />
 Alternative, manual installation steps below. No need to execute, if you have performed the steps above.

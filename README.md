@@ -4,7 +4,7 @@ A service mesh workshop on the fundamentals of Linkerd. All training resources a
 
 ## Prerequisites
 
-- [Prereq - Install Docker, Kubernetes, and Meshery](prereq/README.md)
+- [Prereq - Install Docker, Kubernetes, Linkerd-CLI, and Meshery](prereq/README.md)
 
 ## Segment 1
 

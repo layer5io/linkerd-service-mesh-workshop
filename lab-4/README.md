@@ -73,4 +73,4 @@ Mainly there are three tools which Linkerd exposes as an extension to it's CLI c
 
 
 
-## [Continue to Lab 5 - Request Routing and Canary Testing](../lab-5/README.md)
+## [Continue to Lab 5 - Debuggin your application with dashboard](../lab-5/README.md)

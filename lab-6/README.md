@@ -72,3 +72,10 @@ With `vote-bot` starting traces for every request, spans should now be showing u
 ```sh
 kubectl -n linkerd port-forward svc/linkerd-jaeger 16686
 ```
+
+You can look for any service in the dropdown and click Find Traces. `vote-bot` is an incredible way to begin exploring the jaeger dashboard.
+
+**Cleanup the tracing components**
+```sh
+kubectl delete ns tracing emojivoto
+```
