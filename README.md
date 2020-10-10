@@ -37,7 +37,7 @@ A service mesh workshop on the fundamentals of Linkerd. All training resources a
 ### Traffic Control
 
 - [Lab 7 - Traffic Splitting using SMI](lab-7/README.md)
-- [Lab 8 - Fault Injection and Circuit Breaking](lab-8/README.md)
+- [Lab 8 - Fault Injection using SMI](lab-8/README.md)
 
 ## Segment 6
 
