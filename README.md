@@ -11,7 +11,7 @@ A workshop on the fundamentals of service mesh through the lens of Linkerd. Ques
 - [Lab 1 - Deploy Linkerd](lab-1/README.md)
 
 <p>
-<img src="img/break.png" style="height:30px;text-align:left; vertical-align:middle;padding:8px" />
+<img src="img/break.png" height="25px" style="text-align:left; vertical-align:top;padding:8px" />
 Break (5 minutes)
 </p>
 
@@ -30,7 +30,7 @@ Break (5 minutes)
 - [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
 
 <p>
-<img src="img/break.png" style="height:30px;text-align:left; vertical-align:top;padding:8px" />
+<img src="img/break.png" height="25px" style="text-align:left; vertical-align:top;padding:8px" />
 Break (5 minutes)
 </p>
 
@@ -44,7 +44,7 @@ Break (5 minutes)
 - [Lab 9 - Mutual TLS & Identity Verification](lab-9/README.md)
 
 <p>
-<img src="img/break.png" style="height:30px;text-align:left; vertical-align:middle;padding:8px" />
+<img src="img/break.png" height="25px" style="text-align:left; vertical-align:top;padding:8px" />
 Wrap-up and Q&A (10 minutes)
 </p>
 
