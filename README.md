@@ -30,7 +30,7 @@ Break (5 minutes)
 - [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
 
 <p>
-<img src="img/break.png" style="height:30px;text-align:left; vertical-align:middle;padding:8px" />
+<img src="img/break.png" style="height:30px;text-align:left; vertical-align:top;padding:8px" />
 Break (5 minutes)
 </p>
 
