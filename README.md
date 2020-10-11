@@ -10,13 +10,13 @@ A workshop on the fundamentals of service mesh through the lens of Linkerd. Ques
 
 - [Lab 1 - Deploy Linkerd](lab-1/README.md)
 
-### Break (5 minutes)
+<img src="img/break.png" style="vertical-align:middle;padding:8px" />
+Break (5 minutes)
 
 ## Deploying an app onto the mesh
 
 - [Lab 2 - Deploy a Sample Application](lab-2/README.md)
 - [Lab 3 - Ingressing and Egressing with Linkerd](lab-3/README.md)
-
 
 ## Exploring Linkerd
 
@@ -27,7 +27,8 @@ A workshop on the fundamentals of service mesh through the lens of Linkerd. Ques
 
 - [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
 
-### Break (5 minutes)
+<img src="img/break.png" style="vertical-align:middle;padding:8px" />
+Break (5 minutes)
 
 ## Traffic Control
 
@@ -38,7 +39,8 @@ A workshop on the fundamentals of service mesh through the lens of Linkerd. Ques
 
 - [Lab 9 - Mutual TLS & Identity Verification](lab-9/README.md)
 
-### Wrap-up and Q&A (10 minutes)
+<img src="img/break.png" style="vertical-align:middle;padding:8px" />
+Wrap-up and Q&A (10 minutes)
 
 ## Authors
 
