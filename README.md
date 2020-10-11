@@ -1,6 +1,6 @@
 # Linkerd Fundamentals
 
-A service mesh workshop on the fundamentals of Linkerd. All training resources are available in the Layer5, the service mesh community on [Slack](http://slack.layer5.io).
+A service mesh workshop on the fundamentals of Linkerd. Questions? Join the [service mesh community](http://slack.layer5.io).
 
 ## Prerequisites
 
