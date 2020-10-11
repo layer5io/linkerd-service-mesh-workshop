@@ -11,22 +11,25 @@ The destination component of the control plane looks for changes in configuratio
 We will be deploying [istio's bookinfo application](https://github.com/istio/istio/tree/master/samples/bookinfo) for this part of the demo
 
 Use meshery to deploy the bookinfo application :
+
 - In Meshery, navigate to the Linkerd adapter's management page from the left nav menu.
 - On the Linkerd adapter's management page, please enter `default` in the `Namespace` field.
 - Then, click the (+) icon on the `Sample Application` card and select `Bookinfo Application` from the list.
 
-
 Now inject linkerd into the sample application
+
 ```sh
 linkerd inject ./sample/bookinfo.yaml | kubectl apply -f -
 ```
 
 This will give you the if the Linkerd injection was successful or not.
+
 ```sh
 linkerd stat deploy
 ```
 
-You will see the following services running in your cluster 
+You will see the following services running in your cluster
+
 ```sh
  kubectl get svc
     NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
@@ -38,11 +41,12 @@ You will see the following services running in your cluster
 ```
 
 You can access the producpage by port-forwarding
+
 ```sh
     kubectl port-forward svc/productpage 9080:9080
 ```
 
-Checking localhost:9080 would show you a product page, with a list of reviews on the right. Those reviews are being loaded from the reviews service which is backed by the 3 reviews pods. The requests to the reviews service are randomly sent to one of the 3 review pods, as they represent different versions of this service. 
+Checking localhost:9080 would show you a product page, with a list of reviews on the right. Those reviews are being loaded from the reviews service which is backed by the 3 reviews pods. The requests to the reviews service are randomly sent to one of the 3 review pods, as they represent different versions of this service.
 
 The three different versions provide different output:
 
@@ -73,6 +77,7 @@ There are two new services created
 ```
 
 Now, let's apply traffic-split CRD from SMI :
+
 ```yaml
 apiVersion: split.smi-spec.io/v1alpha1
 kind: TrafficSplit
@@ -81,23 +86,25 @@ metadata:
 spec:
   service: reviews
   backends:
-  - service: reviews-v1
-    weight: 500m
-  - service: reviews-v2
-    weight: 500m
+    - service: reviews-v1
+      weight: 500m
+    - service: reviews-v2
+      weight: 500m
 ```
 
-This tells Linkerd’s control plane that whenever there are requests to the reviews service, to split them across the `reviews-v1` and `reviews-v2` based on the weights provided. 
+This tells Linkerd’s control plane that whenever there are requests to the reviews service, to split them across the `reviews-v1` and `reviews-v2` based on the weights provided.
+
+# <insert Meshery performance test here>
 
 If we now go back to our product page, we can only see the reviews with orange or no stars appear on each refresh.
 
 ## Cleanup
+
 ```sh
 kubectl delete trafficsplit/reviews-split
 kubectl delete -f ./sample/service.yaml
 ```
 
 - Remove the bookinfo application from the `Meshery Dashboard` by clicking on the `trash icon` in the `sample application` card on the linkerd adapters' page.
-
 
 ## [Continue to Lab 8 - Fault Injection using SMI](lab-8/README.md)
