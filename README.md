@@ -1,49 +1,44 @@
-# Linkerd Fundamentals
+# Service Mesh Fundamentals with Linkerd
 
-A service mesh workshop on the fundamentals of Linkerd. Questions? Join the [service mesh community](http://slack.layer5.io).
+A workshop on the fundamentals of service mesh through the lens of Linkerd. Questions? Join the [service mesh community](http://slack.layer5.io).
 
-## Prerequisites
+## Workshop Prerequisites
 
-- [Prereq - Install Docker, Kubernetes, Linkerd-CLI, and Meshery](prereq/README.md)
+- [Prerequisites: Docker, Kubernetes, and Meshery](prereq/README.md)
 
-## Segment 1
+## Setup Linkerd
 
-### Setup Linkerd
+- [Lab 1 - Deploy Linkerd](lab-1/README.md)
 
-- [Lab 1 - Setup Linkerd](lab-1/README.md)
+### Break (5 minutes)
 
-## Segment 2
-
-### Deploying an app onto the mesh
+## Deploying an app onto the mesh
 
 - [Lab 2 - Deploy a Sample Application](lab-2/README.md)
 - [Lab 3 - Ingressing and Egressing with Linkerd](lab-3/README.md)
 
-## Segment 3
 
-### Exploring Linkerd Web
+## Exploring Linkerd
 
-- [Lab 4 - Exploring Linkerd web](lab-4/README.md)
+- [Lab 4 - Exploring Linkerd](lab-4/README.md)
 - [Lab 5 - Debugging sample application using web](lab-5/README.md)
 
-## Segment 4
-
-### Observability
+## Observability
 
 - [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
 
-## Segment 5
+### Break (5 minutes)
 
-### Traffic Control
+## Traffic Control
 
 - [Lab 7 - Traffic Splitting using SMI](lab-7/README.md)
 - [Lab 8 - Fault Injection using SMI](lab-8/README.md)
 
-## Segment 6
-
-### Security
+## Security
 
 - [Lab 9 - Mutual TLS & Identity Verification](lab-9/README.md)
+
+### Wrap-up and Q&A (10 minutes)
 
 ## Authors
 
