@@ -6,7 +6,29 @@ Linkerd's telemetry and monitoring features function automatically, without requ
 
 We have already looked at Linkerd Telemetry, not by name but by concept. Using stat, top and tap is one of the major and characterstic feature which Linkerd offers out of the box. All of this metrics are also accessible through Grafana Dashboard which Linkerd provides.
 
-Accessing Grafana Dashboard for each service in Linkerd :
+Expose Grafana service:
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: linkerd-grafana
+  namespace: linkerd
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+
+spec:
+  rules:
+    - host: grafana.example.com
+      http:
+        paths:
+          - backend:
+			        serviceName: linkerd-grafana
+              servicePort: 3000
+```
 
 - Start `linkerd dashboard` & navigate over the service you would want to see Grafana Dashboard for.
 - In the last column, click of the `Grafana Icon` to access the metrics dashboard for the following deployment.
