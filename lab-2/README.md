@@ -67,7 +67,7 @@ This will do three things:
 1. Verify that previous deployments are all in a state of AVAILABLE before continuing. **Do not proceed until they are up and running.**
 
    ```sh
-   watch -n emojivoto kubectl get deployment
+   watch kubectl get deployment -n emojivoto 
    ```
 
 2. Inspect the details of the pods
@@ -75,13 +75,13 @@ This will do three things:
    Let us look at the details of the pods:
 
    ```sh
-   watch -n emojivoto kubectl get po
+   watch kubectl get po -n emojivoto 
    ```
 
    Let us look at the details of the services:
 
    ```sh
-   watch -n emojivoto kubectl get svc
+   watch kubectl get svc -n emojivoto 
    ```
 
    Choose one of Emojivoto's services (e.g. `web-svc`), and view it's sidecar configuration:
