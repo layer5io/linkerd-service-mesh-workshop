@@ -27,7 +27,7 @@ Break (5 minutes)
 
 ## Observability
 
-- [Lab 6 - Telemetry & Distributed Tracing](lab-6/README.md)
+- [Lab 6 - Metrics and Traces](lab-6/README.md)
 
 <p>
 <img src="img/break.png" height="25px" style="text-align:left; vertical-align:top;padding:8px" />
@@ -50,9 +50,22 @@ Wrap-up and Q&A (10 minutes)
 
 # Workshop Resources
 
-Workshop and other resources are available in the [service mesh community](https://layer5.io/community).
+This workshop and other service mesh resoruces have been created by the Layer5 [service mesh community](https://layer5.io/community).
 
-## Workshop Authors
+## About Layer5
 
-- Layer5 Authors [Twitter](https://twitter.com/layer5), [Slack](http://slack.layer5.io)
+**Community First**
 
+<p>The <a href="https://layer5.io">Layer5</a> community represents the largest collection of service mesh projects and their maintainers in the world.</p>
+
+**Open Source First**
+
+<p>Our projects establish industry standards and enable service developers, owners, and operators with repeatable patterns and best practices for managing all aspects of distributed services. Our shared commitment to the open-source spirit push the Layer5 community and its projects forward.</p>
+
+- Engage in [Slack](http://slack.layer5.io)
+- Follow on Twitter: [@layer5](https://twitter.com/layer5), [@mesheryio](https://twitter.com/mesheryio), [@smp_spec](https://twitter.com/smp_spec)
+- Watch on [YouTube](https://www.youtube.com/channel/UCFL1af7_wdnhHXL1InzaMvA?sub_confirmation=1), Follow on [LinkedIn](https://www.linkedin.com/company/layer5)
+
+## License
+
+This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).

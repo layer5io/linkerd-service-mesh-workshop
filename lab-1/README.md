@@ -1,6 +1,6 @@
 # Lab 1 - Deploy Linkerd
 
-Now that we have a Kubernetes cluster and Meshery, we are ready to download and deploy Linkerd resources.
+With [prerequisites](../prereq/README.md) complete, you are ready to download and deploy Linkerd resources.
 
 ## Steps
 
@@ -10,15 +10,25 @@ Now that we have a Kubernetes cluster and Meshery, we are ready to download and 
 
 ## <a name="1"></a> 1 - Install Linkerd
 
-In Meshery, select the deployed Linkerd adapter in the left nav menu under the `Management` section ([see screenshot](img/linkerd.png)).
+Using Meshery, select the Linkerd adapter from the `Management` section.
+<a href="img/linkerd-adapter.png">
+<img src="img/linkerd-adapter.png" width="50%" align="center" />
+</a>
 
-On the Linkerd adapter's management page, on the `Install` card, you can click on the (+) icon and select `Latest Linkerd` to install the latest version of Linkerd ([see screenshot](img/linkerd.png)).
+Inside the Linkerd management page:
+
+1. Type `linkerd` into the namespace field.
+1. Click the (+) icon on the `Install` card and select `Latest Linkerd` to install the latest version of Linkerd.
+
+   <a href="img/install-linkerd.png">
+   <img src="img/install-linkerd.png" width="50%" align="center" />
+   </a>
 
 <small>For manual steps go [here](#appendix)</small>
 
 ## <a name="2"></a> 2 - Verify install
 
-Linkerd is deployed in a separate Kubernetes namespace `Linkerd`. To check if Linkerd is deployed, and also, to see all the pieces that are deployed, execute the following:
+Linkerd is deployed in the `linkerd` Kubernetes namespace. Verify that Linkerd and its components are deployed, execute the command:
 
 ```sh
 linkerd check
@@ -26,7 +36,7 @@ linkerd check
 
 ## <a name="3"></a> 3 - Enforce mTLS strict mode
 
-By default, Linkerd automatically enables mutual Transport Layer Security (mTLS) for most HTTP-based communication between meshed pods, by establishing and authenticating secure, private TLS connections between Linkerd proxies.
+By establishing mutually-authenticated connections between Linkerd proxies , Linkerd automatically enables mutual Transport Layer Security (mTLS) by default for most HTTP-based communication between services.
 
 ## <a name="4"></a> 4 - Confirming Add-ons
 
@@ -37,12 +47,18 @@ Linkerd, as part of this workshop, is installed with several optional addons lik
 3. [Jaeger](https://www.jaegertracing.io/)
 4. [Dashboard](https://linkerd.io/2/reference/architecture/#dashboard)
 
-You will use Prometheus and Grafana for collecting and viewing metrics, while for viewing distributed traces, you can choose between [Jaeger](https://www.jaegertracing.io/). In this training, we will use Jaeger.
+You will use Prometheus and Grafana for collecting and viewing metrics, and c[Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
 
-## [Continue to Lab 2 - Deploy Sample Emojivoto app](../lab-2/README.md)
+<img src="../img/go.svg" width="32" height="32" align="left"
+style="padding-right:8px;" />
 
+## [Continue to Lab 2](../lab-2/README.md): Deploy Sample Emojivoto app
+
+<br />
 <hr />
-Alternative, manual installation steps below. No need to execute, if you have performed the steps above.
+
+Alternative, manual installation steps are provided for reference below. No need to execute these if you have performed the steps above.
+
 <hr />
 
 ## <a name="appendix"></a> Appendix - Alternative Manual Install

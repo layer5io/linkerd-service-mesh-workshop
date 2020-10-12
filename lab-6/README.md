@@ -7,6 +7,7 @@ Linkerd's telemetry and monitoring features function automatically, without requ
 We have already looked at Linkerd Telemetry, not by name but by concept. Using stat, top and tap is one of the major and characterstic feature which Linkerd offers out of the box. All of this metrics are also accessible through Grafana Dashboard which Linkerd provides.
 
 Accessing Grafana Dashboard for each service in Linkerd :
+
 - Start `linkerd dashboard` & navigate over the service you would want to see Grafana Dashboard for.
 - In the last column, click of the `Grafana Icon` to access the metrics dashboard for the following deployment.
 
@@ -14,9 +15,10 @@ Accessing Grafana Dashboard for each service in Linkerd :
 
 Linkerd added support for Distributed Tracing, which means that if your application has enabled tracing based on B3 Propagation, Linkerd proxies would automatically recognize that (as the trace-id is propogated through http headers) and send their spans, provided that the proxies are configured regarding the meshed trace collector endpoint.
 
-A service mesh would not be able to give you traces automatically though its in the request-response path, as it can’t map a inbount request to the corresponding outbound requests. So, It is needed for the application to be instrumented. In languages like Golang, where there is ctx.Context primitive used widely already, Instrumentation is very easy as the changes required here are to update the application server to generate the trace-id header and then make sure to pass the ctx.Context everywhere and use it when sending outbound requests. This is required as the Trace collector, needs a way to map inbound to outbound requests. This is done by using the metadata passed through the context. 
+A service mesh would not be able to give you traces automatically though its in the request-response path, as it can’t map a inbount request to the corresponding outbound requests. So, It is needed for the application to be instrumented. In languages like Golang, where there is ctx.Context primitive used widely already, Instrumentation is very easy as the changes required here are to update the application server to generate the trace-id header and then make sure to pass the ctx.Context everywhere and use it when sending outbound requests. This is required as the Trace collector, needs a way to map inbound to outbound requests. This is done by using the metadata passed through the context.
 
 To enable tracing onto your cluster :
+
 ```sh
 cat >> config.yaml << EOF
 tracing:
@@ -27,11 +29,13 @@ EOF
 This configuration file can also be used to apply Add-On configuration (not just specific to tracing Add-On).
 
 Let us apply that configuration to the linkerd upgrade command using the --addon-config flag and pipe that output to kubectl apply.
+
 ```sh
 linkerd upgrade --addon-config config.yaml | kubectl apply -f -
 ```
 
 Before moving onto the next step, make sure everything is up and running with kubectl:
+
 ```sh
 kubectl -n linkerd rollout status deploy/linkerd-collector
 kubectl -n linkerd rollout status deploy/linkerd-jaeger
@@ -40,6 +44,7 @@ kubectl -n linkerd rollout status deploy/linkerd-jaeger
 ## 6.2.1 Configure your sample application
 
 Apply the tracing configuration to the `emojivoto application`:
+
 ```sh
 kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
 spec:
@@ -51,8 +56,8 @@ spec:
 '
 ```
 
-
 Before moving onto the next step, make sure everything is up and running with kubectl:
+
 ```sh
 kubectl -n emojivoto rollout status deploy/web
 ```
@@ -60,6 +65,7 @@ kubectl -n emojivoto rollout status deploy/web
 The above command enables tracing in the linkerd proxies but the application containers still don’t have it enabled. Tracing can be enabled in the sample application can be enabled by
 
 To enable tracing in emojivoto, run:
+
 ```sh
  kubectl -n emojivoto set env --all deploy OC_AGENT_HOST=linkerd-collector.linkerd:55678
 ```
@@ -87,8 +93,12 @@ In Linkerd, as told above Grafana Integration is present in the `linkerd-web` ui
 Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if you navigate to `linkerd-web` ui you should see jaeger icon in the extreme right.
 <img align="center" style="margin-bottom:20px;" src="img/linkerd-jaeger-ui.png"  width="70%" />
 **Cleanup the tracing components**
+
 ```sh
 kubectl delete ns tracing emojivoto
 ```
 
-## [Continue to Lab 7 - Traffic Splitting using SMI](../lab-7/README.md)
+<img src="../img/go.svg" width="32" height="32" align="left"
+style="padding-right:8px;" />
+
+## [Continue to Lab 7](../lab-7/README.md) - Traffic Splitting using SMI

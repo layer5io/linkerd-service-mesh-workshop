@@ -117,20 +117,25 @@ In the labs, you will use a combination of Meshery's UI and your terminal. We su
 ## Install Linkerd-CLI
 
 Install linkerd cli into your local system using :
+
 ```sh
 curl -sL https://run.linkerd.io/install | sh
 export PATH=$PATH:$HOME/.linkerd2/bin
 ```
+
 If you are on MacOS, you can use homebrew to install Linkerd cli:
+
 ```sh
 brew install linkerd
 ```
 
 To verify if the cli was successfully installed:
+
 ```sh
 linkerd version
 ```
 
+<img src="../img/go.svg" width="32" height="32" align="left"
+style="padding-right:8px;" />
 
-
-# [Continue to Lab 1 - Deploy Linkerd](../lab-1/README.md)
+# [Continue to Lab 1](../lab-1/README.md) - Deploy Linkerd

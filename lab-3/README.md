@@ -25,6 +25,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 
 - Install Ingress Controller using (For Minikube)
+
 ```sh
 minikube addons enable ingress
 ```
@@ -63,7 +64,7 @@ The important definition in the above written definition is
       grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
 ```
 
-This model joins the two mandates that NGINX utilizes for proxying HTTP and gRPC traffic. Practically speaking, it is just important to set either the proxy_set_header or grpc_set_header mandate, contingent upon the protocol utilized by the administration, anyway NGINX will overlook any orders that it needn't bother with. 
+This model joins the two mandates that NGINX utilizes for proxying HTTP and gRPC traffic. Practically speaking, it is just important to set either the proxy_set_header or grpc_set_header mandate, contingent upon the protocol utilized by the administration, anyway NGINX will overlook any orders that it needn't bother with.
 
 Nginx will include a l5d-dst-abrogate header to train Linkerd what administration the solicitation is bound for. You'll need to incorporate both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the objective servicePort.
 
@@ -81,4 +82,7 @@ You can now curl to your service without using port-forward
 curl -H "Host: example.com" http://{external-ip}
 ```
 
-## [Continue to lab 4 - Exploring Linkerd Web](../lab-4/README.md)
+<img src="../img/go.svg" width="32" height="32" align="left"
+style="padding-right:8px;" />
+
+## [Continue to Lab 4](../lab-4/README.md) - Exploring Linkerd Dashboard

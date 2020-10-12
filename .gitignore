@@ -3,3 +3,5 @@ workshop_snaps/*
 notes*.txt
 
 **/separation*/*
+
+.DS_Store

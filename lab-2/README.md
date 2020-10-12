@@ -7,36 +7,36 @@ To play with Linkerd and demonstrate some of it's capabilities, you will deploy 
 Emojivoto is a sample microservice application that allows users to vote for their favorite emoji. It displays votes received on a leaderboard. May the best emoji win!
 
 ![Emojivoto's architecture](https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/assets/emojivoto-topology.png)
-_Emojivoto's architecture_
+_Emojivoto's architecture. Source: Bouyant_
 
-It’s worth noting that these services have no dependencies on Linkerd, but make an interesting service mesh example, particularly because of the multitude of services, languages and versions for the reviews service.
+It’s worth noting that these services have no dependencies on Linkerd, but make an interesting service mesh example, particularly because of the variety of services, languages and versions for the reviews service.
+
+### <a name="auto"></a> A note on sidecar proxy injection
 
 The Linkerd sidecar proxy can be either manually or automatically injected into your application's pods.
 
 A sidecar injector is used for automating the injection of the Linkerd proxy into your application's pod spec. The Kubernetes admission controller enforces this behavior send sending a webhook request the the sidecar injector every time a pod is to be scheduled. This injector inspects resources for a Linkerd-specific annotation (linkerd.io/inject: enabled). When that annotation exists, the injector mutates the pod's specification and adds both an init container as well as a sidecar containing the proxy itself.
 
-As part of Linkerd deployment in [Lab 1](../lab-1/README.md), we have deployed the sidecar injector.
-
-### <a name="auto"></a> Deploying the sample application
-
-Linkerd, deployed as part of this workshop, will also deploy the sidecar injector. Let us now verify sidecar injector deployment.
+As part of Linkerd deployment in [Lab 1](../lab-1/README.md), you have deployed the sidecar proxy injector, which should be running in your control plane.To verify, execute this command:
 
 ```sh
 kubectl get deployment linkerd-proxy-injector -n linkerd
 ```
 
-Output:
+Expected Output:
 
 ```sh
 NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
 linkerd-proxy-injector   1/1     1            1           9m49s
 ```
 
+Examine the annotation added to the `linkerd` namespace. Execute this command:
+
 ```sh
 kubectl get namespace linkerd -o yaml
 ```
 
-Output:
+Expected Output:
 
 ```sh
 apiVersion: v1
@@ -69,12 +69,15 @@ metadata:
       ...
 ```
 
-In Meshery, navigate to the Linkerd adapter's management page from the left nav menu.
+## Deploying the sample application
 
-On the Linkerd adapter's management page, please enter `default` in the `Namespace` field.
-Then, click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
+To deploy the Emojivoto application, follow these steps:
 
-This will do 3 things:
+1. Using Meshery, navigate to the Linkerd management page.
+1. Enter `default` in the `Namespace` field.
+1. Click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
+
+This will do three things:
 
 1. Deploy `Emojivoto Application` in Emojivoto namespace.
 1. Deploys all the Emojivoto services and replica's in the required namespace
@@ -104,23 +107,23 @@ This will do 3 things:
    watch -n emojivoto kubectl get svc
    ```
 
-   Now let us pick a service, for instance productpage service, and view it's sidecar configuration:
+   Choose one of Emojivoto's services (e.g. `web-svc`), and view it's sidecar configuration:
 
    ```sh
-   kubectl -n emojivoto get po
+   kubectl -n emojivoto get svc
 
    kubectl -n emojivoto describe service svc/web-svc
    ```
 
-Let's look at the application deployment by port-forwarding the web-service:
+Let's look at the application deployment by port-forwarding the `web-svc` service:
+
 ```sh
 kubectl -n emojivoto port-forward svc/web-svc 8080:80
 ```
 
 #### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
 
-The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from linkerd service mesh.
-Now we will be injecting linkerd into our sample application
+The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from Linkerd service mesh. Injecting linkerd into our sample application
 
 ```sh
 kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
@@ -142,8 +145,12 @@ linkerd -n emojivoto check --proxy
 
 Linkerd, in contrast to istio annotates the resources (namespaces, deployment workloads) rather than labelling them.
 
-## [Continue to Lab 3 - Using Ingress with Linkerd](../lab-3/README.md)
+<img src="../img/go.svg" width="32" height="32" align="left"
+style="padding-right:8px;" />
 
+## [Continue to Lab 3](../lab-3/README.md) - Using Ingress with Linkerd
+
+<br />
 <hr />
 Alternative, manual installation steps below. No need to execute, if you have performed the steps above.
 <hr />
