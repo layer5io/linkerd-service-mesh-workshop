@@ -16,7 +16,10 @@ Use meshery to deploy the bookinfo application :
 - On the Linkerd adapter's management page, please enter `default` in the `Namespace` field.
 - Then, click the (+) icon on the `Sample Application` card and select `Bookinfo Application` from the list.
 
-Now inject linkerd into the sample application
+OR...
+
+- Download the (./sample/bookinfo.yaml](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/lab-7/sample/book-info.yaml)
+- Inject linkerd into the sample application.
 
 ```sh
 linkerd inject ./sample/bookinfo.yaml | kubectl apply -f -
