@@ -65,13 +65,7 @@ Alternative, manual installation steps are provided for reference below. No need
 
 ## <a name="appendix"></a> Appendix - Alternative Manual Install
 
-### <a name="1.1"></a> 1.1 - Download Linkerd
-
-You will download and deploy the latest Linkerd resources on your Kubernetes cluster.
-
-**_Note to Docker Desktop users:_** please ensure your Docker VM has atleast 4GiB of Memory, which is required for all services to run.
-
-### <a name="1.2"></a> 1.2 - Setting up `linkerd` CLI
+### Download `linkerd` CLI
 
 On a \*nix system, you can setup `linkerd` by doing the following:
 
@@ -102,7 +96,7 @@ We can use a new feature in linkerd to check if the cluster is ready for install
 linkerd check --pre
 ```
 
-### Install Linkerd:
+### Install and Verify Linkerd:
 
 Deploy Linkerd custom resources:
 
