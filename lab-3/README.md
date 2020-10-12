@@ -14,6 +14,7 @@ In this workshop, you will use the NGINX Ingress Controller with Linkerd.
 
 Using Meshery, select the Linkerd from the `Management` menu, and:
 
+1. Enter `ingress-nginx` into the namespace field.
 1. Click the (+) icon on the `Apply Service Mesh Configuration` card and select `NGINX Ingress Controller` to install the latest version of KIC.
 
 ## 3.2 Setting up ingress controller with the sample application deployed
