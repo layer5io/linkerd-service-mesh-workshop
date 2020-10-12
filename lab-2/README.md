@@ -4,20 +4,15 @@ To play with Linkerd and demonstrate some of it's capabilities, you will deploy 
 
 ## The EmojiVoto sample application
 
-Emojivoto is a sample microservice application that allows users to vote for their favorite emoji. It displays votes received on a leaderboard. May the best emoji win!
-
-![Emojivoto's architecture](https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/assets/emojivoto-topology.png)
-_Emojivoto's architecture. Source: Bouyant_
-
-It’s worth noting that these services have no dependencies on Linkerd, but make an interesting service mesh example, particularly because of the variety of services, languages and versions for the reviews service.
+Emojivoto is a sample microservice application that allows users to vote for their favorite emoji. It displays votes received on a leaderboard. Emojivoto has no dependecies on Linkerd, but will run fine either on or off the service mesh.
 
 ### <a name="auto"></a> A note on sidecar proxy injection
 
 The Linkerd sidecar proxy can be either manually or automatically injected into your application's pods.
 
-A sidecar injector is used for automating the injection of the Linkerd proxy into your application's pod spec. The Kubernetes admission controller enforces this behavior send sending a webhook request the the sidecar injector every time a pod is to be scheduled. This injector inspects resources for a Linkerd-specific annotation (linkerd.io/inject: enabled). When that annotation exists, the injector mutates the pod's specification and adds both an init container as well as a sidecar containing the proxy itself.
+A sidecar injector is used for automating the injection of the Linkerd proxy into your application's pod spec. The Kubernetes admission controller enforces this behavior send sending a webhook request the the sidecar injector every time a pod is to be scheduled. This injector inspects resources for a Linkerd-specific annotation (`linkerd.io/inject: enabled`). When that annotation exists, the injector mutates the pod's specification and adds both an init container as well as a sidecar containing the proxy itself.
 
-As part of Linkerd deployment in [Lab 1](../lab-1/README.md), you have deployed the sidecar proxy injector, which should be running in your control plane.To verify, execute this command:
+As part of Linkerd deployment in [Lab 1](../lab-1/README.md), you have deployed the sidecar proxy injector, which should be running in your control plane. To verify, execute this command:
 
 ```sh
 kubectl get deployment linkerd-proxy-injector -n linkerd
@@ -33,40 +28,22 @@ linkerd-proxy-injector   1/1     1            1           9m49s
 Examine the annotation added to the `linkerd` namespace. Execute this command:
 
 ```sh
-kubectl get namespace linkerd -o yaml
+kubectl describe namespace linkerd
 ```
 
 Expected Output:
 
 ```sh
-apiVersion: v1
-kind: Namespace
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Namespace","metadata":{"annotations":{"linkerd.io/inject":"disabled"},"labels":{"config.linkerd.io/admission-webhooks":"disabled","linkerd.io/control-plane-ns":"linkerd","linkerd.io/is-control-plane":"true"},"name":"linkerd"}}
-    linkerd.io/inject: disabled
-  creationTimestamp: "2020-10-09T18:21:48Z"
-  labels:
-    config.linkerd.io/admission-webhooks: disabled
-    linkerd.io/control-plane-ns: linkerd
-    linkerd.io/is-control-plane: "true"
-  managedFields:
-  - apiVersion: v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:kubectl.kubernetes.io/last-applied-configuration: {}
-          f:linkerd.io/inject: {}
-        f:labels:
-          .: {}
-          f:config.linkerd.io/admission-webhooks: {}
-          f:linkerd.io/control-plane-ns: {}
-          f:linkerd.io/is-control-plane: {}
-      f:status:
-      ...
+Name:         linkerd
+Labels:       config.linkerd.io/admission-webhooks=disabled
+              linkerd.io/control-plane-ns=linkerd
+              linkerd.io/is-control-plane=true
+Annotations:  linkerd.io/inject: disabled
+Status:       Active
+
+No resource quota.
+
+No LimitRange resource.
 ```
 
 ## Deploying the sample application
