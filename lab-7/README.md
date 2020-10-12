@@ -108,7 +108,7 @@ kubectl delete -f ./sample/service.yaml
 - Remove the bookinfo application from the `Meshery Dashboard` by clicking on the `trash icon` in the `sample application` card on the linkerd adapters' page.
 
 <h2>
-  <a href="../lab-4/README.md">
+  <a href="../lab-8/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
   Continue to Lab 8</a>: Fault Injection using SMI
   </h2>
