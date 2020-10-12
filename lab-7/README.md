@@ -18,7 +18,7 @@ Use meshery to deploy the bookinfo application :
 
 OR...
 
-- Download the (./sample/bookinfo.yaml](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/lab-7/sample/book-info.yaml)
+- Download the [./sample/bookinfo.yaml](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/lab-7/sample/book-info.yaml)
 - Inject linkerd into the sample application.
 
 ```sh
