@@ -61,7 +61,7 @@ spec:
 
 This exposes the dashboard at `dashboard.example.com` and protects it with basic auth with credentials admin,admin.
 
-If you create an entry in your resolv.conf for `dashboard.example.com` to localhost, you can see the dashboard deployment.
+From here you may need to modify your resolv.conf to add `dashboard.example.com` to localhost or use an alternative approach in order to see the dashboard deployment. We will not cover this in the workshop.
 
 ## 4.2 Tools exposed by dashboard
 
