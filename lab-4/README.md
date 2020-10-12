@@ -79,5 +79,5 @@ Mainly there are three tools which Linkerd exposes as an extension to it's CLI c
 <h2>
   <a href="../lab-5/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
-  Continue to Lab 5</a>: Debugging your application with dashboard
+  Continue to Lab 6</a>: Linkerd Observability
   </h2>
