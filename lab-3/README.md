@@ -42,11 +42,21 @@ spec:
               serviceName: web-svc
               servicePort: 80
 ```
-This model joins the two mandates that NGINX utilizes for proxying HTTP and gRPC traffic. Practically speaking, it is just important to set either the proxy_set_header or grpc_set_header mandate, contingent upon the protocol utilized by the administration, anyway NGINX will overlook any orders that it needn't bother with.
+Nginx ingress will include the `l5d-dst-abrogate` header to train Linkerd what administration the solicitation is bound for. You'll need to incorporate both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the objective servicePort.
 
-Nginx will include a l5d-dst-abrogate header to train Linkerd what administration the solicitation is bound for. You'll need to incorporate both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the objective servicePort.
+To test this, you need to get the external IP of your controller. 
 
-To test this, you need to get the external IP of your controller which you can get by running
+**Docker Desktop**
+You may use http://localhost or http://kubernetes.docker.internal or your host's IP address.
+
+**Minikube**
+```sh
+minikube tunnel
+```
+
+**Hosted Kubernetes**
+
+Retrieve the external IP address by running:
 
 ```sh
 kubectl get svc --all-namespaces \
@@ -54,7 +64,7 @@ kubectl get svc --all-namespaces \
   -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress[0].ip
 ```
 
-You can now curl to your service without using port-forward
+You can now curl to your service without using port-forward, like this:
 
 ```sh
 curl -H "Host: example.com" http://{external-ip}
