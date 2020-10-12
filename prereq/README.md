@@ -14,7 +14,7 @@ You will access to a Kubernetes cluster in this training. While any Kubernetes c
 
 1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
    1. Ensure 4GB is allocated to your Docker Desktop VM in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-memory.png)).
-1. Create Kubernetes cluster:Enable Kubernetes in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-kube.png)).
+1. Create Kubernetes cluster. Enable Kubernetes in Docker Desktop preferences ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/docker-desktop-kube.png)).
 1. Please open `~/.kube/config` and check the `docker-desktop` cluster under `clusters` section and ensure you see something like the image below:
    ![](img/docker-desktop-config.png)
 
@@ -26,8 +26,6 @@ You will access to a Kubernetes cluster in this training. While any Kubernetes c
 
 1. [Install minikube](https://minikube.sigs.k8s.io).
 1. Create Kubernetes cluster: `minikube start`.
-1. Export kubeconfig (to be used with Meshery):
-   `kubectl config view --minify --flatten > config_minikube.yaml`
 
 ### Check Cluster Status
 
@@ -50,7 +48,6 @@ kube-system   kube-controller-manager-node1   1/1       Running   0          1h
 kube-system   kube-dns-545bc4bfd4-nnbwn       3/3       Running   0          1h
 kube-system   kube-proxy-pxq27                1/1       Running   0          1h
 kube-system   kube-scheduler-node1            1/1       Running   0          1h
-kube-system   weave-net-wq5t5                 2/2       Running   0          2m
 ```
 
 If all pods are in a `Running` state, you have an operational Kubernetes cluster. Please continue to download and run Meshery.
@@ -68,9 +65,8 @@ Install Meshery on your local machine (running Docker) by executing the followin
 #### Install on MacOS with Homebrew
 
 ```
-brew tap layer5io/tap
-brew install mesheryctl
-mesheryctl start
+brew install layer5io/mesheryctl
+mesheryctl system start
 ```
 
 #### Or... Install on MacOS and Linux with bash script:
@@ -81,7 +77,7 @@ curl -L https://git.io/meshery | bash -
 
 #### Or.... Install on Windows with `mesheryctl` binary
 
-### [Windows](https://meshery.layer5.io/docs/installation#using-docker-on-windows)
+### [Windows](https://meshery.layer5.io/docs/installation#windows)
 
 1. Use Scoop.
 
@@ -91,7 +87,7 @@ or
 1. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
 ```
-./mesheryctl start
+./mesheryctl system start
 ```
 
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
@@ -104,9 +100,17 @@ Sign into Meshery ([see screenshot](https://raw.githubusercontent.com/layer5io/l
 
 Meshery attempts to automatically connect with your Kubernetes cluster by loading the kubeconfig found in your `$HOME/.kube` folder and connecting existing service mesh adapters ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_landing_page.png)).
 
-If your kubeconfig is in a different location (i.e. if you're using minikube, not Docker Desktop), point Meshery to your kubeconfig location by navigating to the Settings page. Navigate to Settings by clicking the gear icon on the right top of the screen ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_landing_page_settings_icon.png)).
+If your kubeconfig is in a different location (i.e. if you are not using Docker Desktop), point Meshery to your kubeconfig location by navigating to the Settings page. Navigate to Settings by clicking the gear icon on the right top of the screen ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_landing_page_settings_icon.png)).
 
 This will take the user to the `Settings` page and here you can load up your new config file and select the context to use ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/feature/blend-in-meshery/prereq/img/meshery_settings_page.png)).
+
+**If you are using minikube**:
+To configure Meshery to use minikube:
+1. Login to Meshery. Under your user profile, click `Get Token`.
+1. Use `mesheryctl` to configure Meshery to use minikube. Execute:
+```sh
+mesheryctl system config minikube -t ~/Downloads/auth.json
+```
 
 In a similar fashion, if you don't see the Linkerd adapter loaded, you should be able to switch to the `Service Meshes` tab in the `Settings` page and connect to existing adapters from the drop down ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_settings_page-service-meshes.png)).
 
@@ -114,15 +118,17 @@ Once an adapter is connected, you will also see it added to the nav menu on the 
 
 In the labs, you will use a combination of Meshery's UI and your terminal. We suggest splitting the view on your display between your terminal and your web browser, so that you don't have to switch between apps frequently.
 
-## Install Linkerd-CLI
+## Install Linkerd CLI
 
-Install linkerd cli into your local system using :
+**Bash**
+Install `linkerd` CLI on your local system by executing:
 
 ```sh
 curl -sL https://run.linkerd.io/install | sh
 export PATH=$PATH:$HOME/.linkerd2/bin
 ```
 
+**Brew**
 If you are on MacOS, you can use homebrew to install Linkerd cli:
 
 ```sh
@@ -135,7 +141,9 @@ To verify if the cli was successfully installed:
 linkerd version
 ```
 
-<img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:4px;" />
+<h2>
+  <a href="../lab-1/README.md">
+  <img src="../img/go.svg" width="32" height="32" align="left" />
+  Continue to Lab 1</a>: Deploy Linkerd
+</h2>
 
-# [Continue to Lab 1](../lab-1/README.md) - Deploy Linkerd
