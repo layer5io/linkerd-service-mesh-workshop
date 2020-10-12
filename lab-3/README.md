@@ -50,9 +50,14 @@ To test this, you need to get the external IP of your controller.
 You may use http://localhost or http://kubernetes.docker.internal or your host's IP address.
 
 **Minikube**
+
+Run this command to expose your Kubernetes's cluster services to your localhost network.
+
 ```sh
 minikube tunnel
 ```
+
+You may use http://localhost or You may use http://localhost:<port> provided by the output of `minikube tunnel`.
 
 **Hosted Kubernetes**
 
