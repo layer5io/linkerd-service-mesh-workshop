@@ -1,4 +1,4 @@
-# Lab 5 - Debugging application using Linkerd
+# (Optional) Lab 5 - Debugging application using Linkerd
 
 We will be using Linkerd to debug the sample application, we had deployed earlier in the workshop.
 The demo application emojivoto has some issues. Let's use that and Linkerd to diagnose an application that fails in ways which are a little more subtle than the entire service crashing.
