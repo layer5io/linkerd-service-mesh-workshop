@@ -87,15 +87,15 @@ This will do three things:
    Choose one of Emojivoto's services (e.g. `web-svc`), and view it's sidecar configuration:
 
    ```sh
-   kubectl -n emojivoto get svc
+   kubectl get svc -n emojivoto
 
-   kubectl -n emojivoto describe service svc/web-svc
+   kubectl describe service svc/web-svc -n emojivoto
    ```
 
 Let's look at the application deployment by port-forwarding the `web-svc` service:
 
 ```sh
-kubectl -n emojivoto port-forward svc/web-svc 8080:80
+kubectl port-forward svc/web-svc 8080:80  -n emojivoto
 ```
 
 #### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
