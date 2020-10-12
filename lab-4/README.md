@@ -2,27 +2,25 @@
 
 ## 4.1 Introduction to Linkerd Dashboard
 
-The Linkerd Dashboard gives a significant level perspective on what's going on with your administrations continuously. It very well may be utilized to see the "brilliant" measurements (success rate, requests/second and latency), visualize administration conditions and comprehend the strength of explicit assistance courses. One approach to pull it up is by running linkerd dashboard from the command line([see here](img/stat.png)).
-
-With control plane start and running, we can access the linkerd web by
+The Dashboard provides a clickable user interface for administration of Linkerd. The Dashboard provides measurements of success rate, requests/second and latency for services on the mesh. Run the Linkerd Dashboard, by executing:
 
 ```sh
 linkerd dashboard &
 ```
 
-This command uses a port-forward from the local system to linkerd-web pod, we can also expose the dashboard using ingress which we will see later in this section.
+This command port-forwards from your local system to the `linkerd-web` service. You can also expose the dashboard using Kubernetes `ingress`, which we will see later in this section.
 
-As the control-plane components have linkerd proxy injected in itself, we can see the traffic we are generating by looking at the dashboard itself by
+Since Linkerd's control plane components have the Linkerd proxy sidecarred, you can examine statistics of the traffic you are generating by looking at the dashboard. Execute:
 
 ```sh
 linkerd -n linkerd top deploy/linkerd-web
 ```
 
-_NOTE: `linkerd tap` gives us the ability to listern to a traffic stream for a resource_
+_NOTE: `linkerd tap` provides the ability to listern to a traffic stream for a resource_
 
 ## 4.2 Exposing the dashboard
 
-Instead of using linkerd dashboard every time you'd like to see what's going on, you can expose the dashboard via an ingress. We will use the Nginx ingress, which we had deployed and used in Lab-3.
+Instead of using `linkerd dashboard &` every time you'd like to see what's going on, you can expose the dashboard via an ingress. We will use the Nginx ingress, which we had deployed and used in Lab 3.
 
 We will be applying Nginx ingress-traffic rule with basic authentication protocol
 
