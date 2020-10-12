@@ -102,4 +102,4 @@ kubectl delete ns tracing emojivoto
   <a href="../lab-7/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
   Continue to Lab 7</a>: Traffic Splitting using SMI
-  </h2>
+</h2>
