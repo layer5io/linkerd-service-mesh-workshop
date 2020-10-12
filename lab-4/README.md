@@ -1,13 +1,13 @@
-# Lab 4 - Linkerd Web
+# Lab 4 - Linkerd Dashboard
 
-## 4.1 Introduction to Linkerd Web
+## 4.1 Introduction to Linkerd Dashboard
 
-The Linkerd dashboard gives a significant level perspective on what's going on with your administrations continuously. It very well may be utilized to see the "brilliant" measurements (success rate, requests/second and latency), visualize administration conditions and comprehend the strength of explicit assistance courses. One approach to pull it up is by running linkerd dashboard from the command line([see here](img/stat.png)).
+The Linkerd Dashboard gives a significant level perspective on what's going on with your administrations continuously. It very well may be utilized to see the "brilliant" measurements (success rate, requests/second and latency), visualize administration conditions and comprehend the strength of explicit assistance courses. One approach to pull it up is by running linkerd dashboard from the command line([see here](img/stat.png)).
 
 With control plane start and running, we can access the linkerd web by
 
 ```sh
-linkerd web &
+linkerd dashboard &
 ```
 
 This command uses a port-forward from the local system to linkerd-web pod, we can also expose the dashboard using ingress which we will see later in this section.
