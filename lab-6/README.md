@@ -26,8 +26,8 @@ spec:
       http:
         paths:
           - backend:
-			        serviceName: linkerd-grafana
-              servicePort: 3000
+	  	serviceName: linkerd-grafana
+		servicePort: 3000
 ```
 
 - Start `linkerd dashboard` & navigate over the service you would want to see Grafana Dashboard for.
