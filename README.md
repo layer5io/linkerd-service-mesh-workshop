@@ -39,10 +39,6 @@ Break (5 minutes)
 - [Lab 7 - Traffic Splitting using SMI](lab-7/README.md)
 - [Lab 8 - Fault Injection using SMI](lab-8/README.md)
 
-## Security
-
-- [Lab 9 - Mutual TLS & Identity Verification](lab-9/README.md)
-
 <p>
 <img src="img/break.png" height="25px" style="text-align:left; vertical-align:top;padding:8px" />
 Wrap-up and Q&A (10 minutes)
