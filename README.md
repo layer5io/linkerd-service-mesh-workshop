@@ -48,12 +48,11 @@ Break (5 minutes)
 Wrap-up and Q&A (10 minutes)
 </p>
 
-## Authors
+# Workshop Resources
 
-- Lee Calcote [Twitter](https://twitter.com/lcalcote), [LinkedIn](https://linkedin.com/in/leecalcote), [Blog](https://gingergeek.com), [Talks](https://calcotestudios.com/talks)
-- Kush Trivedi [LinkedIn](https://linkedin.com/in/kushthedude)
+Workshop and other resources are available in the [service mesh community](https://layer5.io/community).
+
+## Workshop Authors
+
 - Layer5 Authors [Twitter](https://twitter.com/layer5), [Slack](http://slack.layer5.io)
 
-# Resources
-
-All workshop resources (slides, labs, accounts, books, landscape, mailing list, slack) can found at [Layer5.io](https://layer5.io/#workshops).
