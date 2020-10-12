@@ -6,28 +6,10 @@ Linkerd's telemetry and monitoring features function automatically, without requ
 
 We have already looked at Linkerd Telemetry, not by name but by concept. Using stat, top and tap is one of the major and characterstic feature which Linkerd offers out of the box. All of this metrics are also accessible through Grafana Dashboard which Linkerd provides.
 
-Expose Grafana service:
+Expose Grafana dashboard:
 
 ```
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: linkerd-grafana
-  namespace: linkerd
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-
-spec:
-  rules:
-    - host: grafana.example.com
-      http:
-        paths:
-          - backend:
-                serviceName: linkerd-grafana
-                servicePort: 3000
+linkerd dashboard &
 ```
 
 - Start `linkerd dashboard` & navigate over the service you would want to see Grafana Dashboard for.
@@ -36,8 +18,6 @@ spec:
 ## 6.2 Distributed tracing with Linkerd
 
 Linkerd added support for Distributed Tracing, which means that if your application has enabled tracing based on B3 Propagation, Linkerd proxies would automatically recognize that (as the trace-id is propogated through http headers) and send their spans, provided that the proxies are configured regarding the meshed trace collector endpoint.
-
-A service mesh would not be able to give you traces automatically though its in the request-response path, as it can’t map a inbount request to the corresponding outbound requests. So, It is needed for the application to be instrumented. In languages like Golang, where there is ctx.Context primitive used widely already, Instrumentation is very easy as the changes required here are to update the application server to generate the trace-id header and then make sure to pass the ctx.Context everywhere and use it when sending outbound requests. This is required as the Trace collector, needs a way to map inbound to outbound requests. This is done by using the metadata passed through the context.
 
 To enable tracing onto your cluster :
 
