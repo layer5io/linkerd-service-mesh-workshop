@@ -23,7 +23,7 @@ Break (5 minutes)
 ## Exploring Linkerd
 
 - [Lab 4 - Exploring Linkerd](lab-4/README.md)
-- [Lab 5 - Debugging sample application using web](lab-5/README.md)
+- (Optional) [Lab 5 - Debugging sample application using web](lab-5/README.md)
 
 ## Observability
 
