@@ -68,10 +68,10 @@ You can now curl to your service without using port-forward
 curl -H "Host: example.com" http://{external-ip}
 ```
 
-<img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:4px;" />
-
-## [Continue to Lab 4](../lab-4/README.md) - Exploring Linkerd Dashboard
+<h2>
+  <img src="../img/go.svg" width="32" height="32" align="left" />
+  <a href="../lab-4/README.md">Continue to Lab 4</a>: Exploring Linkerd Dashboard
+</h2>
 
 <br />
 <hr />
@@ -79,6 +79,8 @@ style="padding-right:4px;" />
 Alternative, manual installation steps are provided for reference below. No need to execute these if you have performed the steps above.
 
 <hr />
+
+## <a name="appendix"></a> Appendix - Alternative Manual Install
 
 ## 3.1 Installing NGINX Ingress Controller
 
