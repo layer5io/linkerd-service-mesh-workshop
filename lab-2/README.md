@@ -146,7 +146,7 @@ linkerd -n emojivoto check --proxy
 Linkerd, in contrast to istio annotates the resources (namespaces, deployment workloads) rather than labelling them.
 
 <img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:8px;" />
+style="padding-right:4px;" />
 
 ## [Continue to Lab 3](../lab-3/README.md) - Using Ingress with Linkerd
 

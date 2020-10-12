@@ -1,38 +1,24 @@
 # Lab 3 - Ingressing and Egressing with Linkerd
 
-The components deployed on the service mesh by default are not exposed outside the cluster.
+<!-- Services running on the Linkerd service mesh by default are not exposed outside the cluster. -->
 
-For reasons of effortlessness, Linkerd doesn't give its own ingress controller. Rather, Linkerd is intended to work close by your ingress controller of decision.
+Linkerd's control plane does not include ingress or egress gateways. Linkerd allows you choice of your preferred ingress (and egress) controller.
 
-## 3.1 How to use Ingress with Linkerd
+## How to use Ingress with Linkerd
 
-In case you're anticipating infusing Linkerd into your ingress controller's pods there is some setup required. Linkerd discovers services dependent on the :authority or Host header. This permits Linkerd to comprehend what service a request is bound for without being subject to DNS or IPs.
+In case you're anticipating infusing Linkerd into your ingress controller's pods there is some setup required. Linkerd discovers services dependent on the `:authority` or `Host` header. This permits Linkerd to comprehend what service a request is bound for without being subject to DNS or IPs.
 
-We will be using Nginx ingress gateway with Linkerd in this workshop.
+In this workshop, you will use the NGINX Ingress Controller with Linkerd.
 
-## 3.2 Installing Nginx ingress controller/gateway
+## 3.1 Installing NGINX Ingress Controller
 
-**Pre-requisites**
+Using Meshery, select the Linkerd from the `Management` menu, and:
 
-- Kubernetes (already set-up)
+1. Click the (+) icon on the `Apply Service Mesh Configuration` card and select `NGINX Ingress Controller` to install the latest version of KIC.
 
-**Installation**
+## 3.2 Setting up ingress controller with the sample application deployed
 
-- Install Ingress Controller using (For Docker-Desktop)
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
-```
-
-- Install Ingress Controller using (For Minikube)
-
-```sh
-minikube addons enable ingress
-```
-
-## 3.3 Setting up ingress controller with the sample application deployed
-
-Apply the following ingress definition to your cluster
+Using Meshery, click the (▶️) icon on the `Apply Custom Configuration` card and apply the following manifest to your cluster:
 
 ```yaml
 apiVersion: extensions/v1beta1
@@ -56,7 +42,7 @@ spec:
               servicePort: 80
 ```
 
-The important definition in the above written definition is
+Note these lines:
 
 ```sh
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -83,6 +69,27 @@ curl -H "Host: example.com" http://{external-ip}
 ```
 
 <img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:8px;" />
+style="padding-right:4px;" />
 
 ## [Continue to Lab 4](../lab-4/README.md) - Exploring Linkerd Dashboard
+
+<br />
+<hr />
+
+Alternative, manual installation steps are provided for reference below. No need to execute these if you have performed the steps above.
+
+<hr />
+
+## 3.1 Installing NGINX Ingress Controller
+
+- Install ingress controller using Docker Desktop
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
+```
+
+- Install the ingress controller using Minikube
+
+```sh
+minikube addons enable ingress
+```

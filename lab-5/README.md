@@ -37,6 +37,6 @@ _Note: Linkerd is aware of gRPC's response classification without any other conf
 Now at this point we have all the necessary debugging information which can help us to restore the application to stable/working state.
 
 <img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:8px;" />
+style="padding-right:4px;" />
 
 ## [Continue to Lab 6](../lab-6/README.md) - Metrics and Traces

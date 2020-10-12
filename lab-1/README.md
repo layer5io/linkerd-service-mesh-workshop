@@ -10,12 +10,13 @@ With [prerequisites](../prereq/README.md) complete, you are ready to download an
 
 ## <a name="1"></a> 1 - Install Linkerd
 
-Using Meshery, select the Linkerd adapter from the `Management` section.
+Using Meshery, select Linkerd from the `Management` menu.
+
 <a href="img/linkerd-adapter.png">
 <img src="img/linkerd-adapter.png" width="50%" align="center" />
 </a>
 
-Inside the Linkerd management page:
+In the Linkerd management page:
 
 1. Type `linkerd` into the namespace field.
 1. Click the (+) icon on the `Install` card and select `Latest Linkerd` to install the latest version of Linkerd.
@@ -50,7 +51,7 @@ Linkerd, as part of this workshop, is installed with several optional addons lik
 You will use Prometheus and Grafana for collecting and viewing metrics, and c[Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
 
 <img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:8px;" />
+style="padding-right:4px;" />
 
 ## [Continue to Lab 2](../lab-2/README.md): Deploy Sample Emojivoto app
 

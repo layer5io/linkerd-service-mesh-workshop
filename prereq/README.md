@@ -136,6 +136,6 @@ linkerd version
 ```
 
 <img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:8px;" />
+style="padding-right:4px;" />
 
 # [Continue to Lab 1](../lab-1/README.md) - Deploy Linkerd
