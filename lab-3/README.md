@@ -69,8 +69,9 @@ curl -H "Host: example.com" http://{external-ip}
 ```
 
 <h2>
+  <a href="../lab-4/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
-  <a href="../lab-4/README.md">Continue to Lab 4</a>: Exploring Linkerd Dashboard
+  Continue to Lab 4</a>: Exploring Linkerd Dashboard
 </h2>
 
 <br />

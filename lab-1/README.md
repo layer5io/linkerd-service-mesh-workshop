@@ -50,10 +50,11 @@ Linkerd, as part of this workshop, is installed with several optional addons lik
 
 You will use Prometheus and Grafana for collecting and viewing metrics, and c[Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
 
-<img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:4px;" />
-
-## [Continue to Lab 2](../lab-2/README.md): Deploy Sample Emojivoto app
+<h2>
+  <a href="../lab-2/README.md">
+  <img src="../img/go.svg" width="32" height="32" align="left" />
+  Continue to Lab 2</a>: Deploy Sample Emojivoto app
+</h2>
 
 <br />
 <hr />

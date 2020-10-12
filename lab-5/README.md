@@ -5,9 +5,9 @@ The demo application emojivoto has some issues. Let's use that and Linkerd to di
 
 Let's jump into debugging the Emojivoto application right away.
 
-## 5.1 Exploring the Linkerd Web
+## 5.1 Exploring the Linkerd Dashboard
 
-In the event that you look at the Linkerd dashboard (by running the linkerd dashboard command), you should see all the resources in the emojivoto namespace, including the deployments. Every deployments running Linkerd shows success rate, requests per second and latency percentiles.
+In the event that you look at the Linkerd dashboard (by running the `linkerd dashboard` command), you should see all the resources in the emojivoto namespace, including the deployments. Every deployments running Linkerd shows success rate, requests per second and latency percentiles.
 If you see closely, you will observe success rate is below 100% because of some buggy endpoint present in the service.
 
 <img align="center" style="margin-bottom:20px;" src="img/octopus.png"  width="70%" />
@@ -36,7 +36,8 @@ _Note: Linkerd is aware of gRPC's response classification without any other conf
 
 Now at this point we have all the necessary debugging information which can help us to restore the application to stable/working state.
 
-<img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:4px;" />
-
-## [Continue to Lab 6](../lab-6/README.md) - Metrics and Traces
+<h2>
+  <a href="../lab-6/README.md">
+  <img src="../img/go.svg" width="32" height="32" align="left" />
+  Continue to Lab 6</a>: Metrics and Traces
+</h2>

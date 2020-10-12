@@ -90,7 +90,7 @@ The first two spans would be the spans sent from the proxy of the client compone
 
 In Linkerd, as told above Grafana Integration is present in the `linkerd-web` ui through which which you can directly jump onto the dashboards of any workload like deployment, pod, etc.
 
-Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if you navigate to `linkerd-web` ui you should see jaeger icon in the extreme right.
+Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if you navigate the Linkerd Dashboard, you should see a Jaeger icon on the right.
 <img align="center" style="margin-bottom:20px;" src="img/linkerd-jaeger-ui.png"  width="70%" />
 **Cleanup the tracing components**
 
@@ -98,7 +98,8 @@ Linkerd has done similar thing with Jaeger, if you have `tracing` enabled, if yo
 kubectl delete ns tracing emojivoto
 ```
 
-<img src="../img/go.svg" width="32" height="32" align="left"
-style="padding-right:4px;" />
-
-## [Continue to Lab 7](../lab-7/README.md) - Traffic Splitting using SMI
+<h2>
+  <a href="../lab-7/README.md">
+  <img src="../img/go.svg" width="32" height="32" align="left" />
+  Continue to Lab 7</a>: Traffic Splitting using SMI
+  </h2>
