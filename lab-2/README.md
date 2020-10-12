@@ -54,11 +54,10 @@ To deploy the Emojivoto application, follow these steps:
 1. Enter `default` in the `Namespace` field.
 1. Click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
 
-This will do three things:
+This peforms these actions:
 
-1. Deploy `Emojivoto Application` in Emojivoto namespace.
-1. Deploys all the Emojivoto services and replica's in the required namespace
-1. Injects Linkerd into each component of the `Emojivoto Application`
+1. Annotes the `emojivoto` namespace for sidecar injection.
+1. Deploys all the Emojivoto services and replica's in the `emojivoto` namespace.
 
 <small>[Steps for manual injection](#appendix)</small>
 
@@ -98,29 +97,13 @@ Let's look at the application deployment by port-forwarding the `web-svc` servic
 kubectl port-forward svc/web-svc 8080:80  -n emojivoto
 ```
 
-#### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
-
-The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from Linkerd service mesh. Injecting linkerd into our sample application
-
-```sh
-kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
-spec:
-  template:
-    metadata:
-      annotations:
-        linkerd.io/inject: enabled
-'
-```
-
-This command retrieves all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
-
-You've now added Linkerd to existing services! Just as with the control plane, it is possible to verify that everything worked the way it should with the data plane. To do this check, run:
+You have onboarded emojivoto to the service mesh. Verify your data plane environment with this check:
 
 ```sh
 linkerd -n emojivoto check --proxy
 ```
 
-Linkerd, in contrast to istio annotates the resources (namespaces, deployment workloads) rather than labelling them.
+Linkerd, in contrast to Istio annotates the resources (namespaces, deployment workloads) rather than labelling them.
 
 <img src="../img/go.svg" width="32" height="32" align="left"
 style="padding-right:4px;" />
@@ -157,7 +140,7 @@ Applying this yaml file included in the Linkerd package you collected in https:/
 kubectl apply -f https://run.linkerd.io/emojivoto.yml
 ```
 
-#### <a name="linkerd_inject"></a> Inject Linkerd into the sample application
+#### <a name="linkerd_inject"></a> Inject Linkerd proxy into the sample application
 
 The emojivoto application is a standalone Kubernetes application that uses a mix of gRPC and HTTP calls to allow the users to vote on their favorite emojis, which means the application can run standalone without support from linkerd service mesh.
 Now we will be injecting linkerd into our sample application
@@ -168,7 +151,19 @@ kubectl get -n emojivoto deploy -o yaml \
  | kubectl apply -f -
 ```
 
-This command retrieves all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
+Or..
+
+```sh
+kubectl -n emojivoto patch -f https://run.linkerd.io/emojivoto.yml -p '
+spec:
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+'
+```
+
+Either of these commands retrieve all of the deployments running in the emojivoto namespace, runs the manifest through linkerd inject, and then reapplies it to the cluster. The linkerd inject command adds annotations to the pod spec instructing Linkerd to add (“inject”) the proxy as a container to the pod spec.
 
 You've now added Linkerd to existing services! Just as with the control plane, it is possible to verify that everything worked the way it should with the data plane. To do this check, run:
 
