@@ -42,7 +42,7 @@ spec:
               serviceName: web-svc
               servicePort: 80
 ```
-Nginx ingress will include the `l5d-dst-abrogate` header to train Linkerd what administration the solicitation is bound for. You'll need to incorporate both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the objective servicePort.
+Nginx ingress will include the `l5d-dst-override` header to tell Linkerd where to direct the request. You'll need to include both the Kubernetes administration FQDN (web-svc.emojivoto.svc.cluster.local) and the destination servicePort.
 
 To test this, you need to get the external IP of your controller. 
 
