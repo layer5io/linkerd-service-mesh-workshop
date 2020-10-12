@@ -59,9 +59,9 @@ spec:
               servicePort: 8084
 ```
 
-This exposes the dashboard at dashboard.example.com and protects it with basic auth with credentials admin,admin.
+This exposes the dashboard at `dashboard.example.com` and protects it with basic auth with credentials admin,admin.
 
-Now you can go to `dashboard.example.com` to see the dashboard deployment
+If you create an entry in your resolv.conf for `dashboard.example.com` to localhost, you can see the dashboard deployment.
 
 ## 4.2 Tools exposed by dashboard
 
