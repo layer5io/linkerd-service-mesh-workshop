@@ -48,7 +48,7 @@ Linkerd, as part of this workshop, is installed with several optional addons lik
 3. [Jaeger](https://www.jaegertracing.io/)
 4. [Dashboard](https://linkerd.io/2/reference/architecture/#dashboard)
 
-You will use Prometheus and Grafana for collecting and viewing metrics, and c[Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
+You will use Prometheus and Grafana for collecting and viewing metrics, and [Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
 
 <h2>
   <a href="../lab-2/README.md">
