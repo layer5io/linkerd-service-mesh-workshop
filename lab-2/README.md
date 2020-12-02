@@ -9,6 +9,10 @@ Emojivoto is a sample microservice application that allows users to vote for the
 ### <a name="auto"></a> But first, a note on sidecar proxy injection
 
 The Linkerd sidecar proxy can be either manually or automatically injected into your application's pods.
+This can be done from the meshery dashboard for namespace globally by,
+1. Using Meshery, navigate to the Linkerd management page.
+2. Click the (+) icon on the `Configure Application` card and select `Annotate Namespace` from the list.
+
 
 A sidecar injector is used for automating the injection of the Linkerd proxy into your application's pod spec. The Kubernetes admission controller enforces this behavior send sending a webhook request the the sidecar injector every time a pod is to be scheduled. This injector inspects resources for a Linkerd-specific annotation (`linkerd.io/inject: enabled`). When that annotation exists, the injector mutates the pod's specification and adds both an init container as well as a sidecar containing the proxy itself.
 
@@ -51,13 +55,13 @@ No LimitRange resource.
 To deploy the Emojivoto application, follow these steps:
 
 1. Using Meshery, navigate to the Linkerd management page.
-1. Enter `default` in the `Namespace` field.
-1. Click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
+2. Enter `default` in the `Namespace` field.
+3. Click the (+) icon on the `Sample Application` card and select `Emojivoto Application` from the list.
 
 This peforms these actions:
 
 1. Annotes the `emojivoto` namespace for sidecar injection.
-1. Deploys all the Emojivoto services and replica's in the `emojivoto` namespace.
+2. Deploys all the Emojivoto services and replica's in the `emojivoto` namespace.
 
 <small>[Steps for manual injection](#appendix)</small>
 
