@@ -116,31 +116,6 @@ In a similar fashion, if you don't see the Linkerd adapter loaded, you should be
 
 Once an adapter is connected, you will also see it added to the nav menu on the left ([see screenshot](https://raw.githubusercontent.com/layer5io/linkerd-service-mesh-workshop/master/prereq/img/meshery_settings_page-service_meshes_with_menu.png)).
 
-In the labs, you will use a combination of Meshery's UI and your terminal. We suggest splitting the view on your display between your terminal and your web browser, so that you don't have to switch between apps frequently.
-
-## Install Linkerd CLI
-
-**Bash**
-Install `linkerd` CLI on your local system by executing:
-
-```sh
-curl -sL https://run.linkerd.io/install | sh
-export PATH=$PATH:$HOME/.linkerd2/bin
-```
-
-**Brew**
-If you are on MacOS, you can use homebrew to install Linkerd cli:
-
-```sh
-brew install linkerd
-```
-
-To verify if the cli was successfully installed:
-
-```sh
-linkerd version
-```
-
 <h2>
   <a href="../lab-1/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
