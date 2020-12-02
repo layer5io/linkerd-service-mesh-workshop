@@ -43,10 +43,10 @@ By establishing mutually-authenticated connections between Linkerd proxies , Lin
 
 Linkerd, as part of this workshop, is installed with several optional addons like:
 
-1. [Prometheus](https://prometheus.io/)
-2. [Grafana](https://grafana.com/)
-3. [Jaeger](https://www.jaegertracing.io/)
-4. [Dashboard](https://linkerd.io/2/reference/architecture/#dashboard)
+1. Prometheus ([site](https://prometheus.io/))
+2. Grafana ([site](https://grafana.com/))
+3. Jaeger ([site](https://www.jaegertracing.io/))
+4. Dashboard ([site](https://linkerd.io/2/reference/architecture/#dashboard))
 
 You will use Prometheus and Grafana for collecting and viewing metrics, and [Jaeger](https://www.jaegertracing.io/) for viewing distribued traces.
 
