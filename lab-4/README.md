@@ -77,7 +77,7 @@ Mainly there are three tools which Linkerd exposes as an extension to it's CLI c
 - tap ([see here](img/tap.png)). : shows the stream of requests across a single pod, deployment, or even everything in the emojivoto namespace.
 
 <h2>
-  <a href="../lab-5/README.md">
+  <a href="../lab-6/README.md">
   <img src="../img/go.svg" width="32" height="32" align="left" />
   Continue to Lab 6</a>: Linkerd Observability
   </h2>
