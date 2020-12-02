@@ -21,9 +21,9 @@ In the Linkerd management page:
 1. Type `linkerd` into the namespace field.
 1. Click the (+) icon on the `Install` card and select `Latest Linkerd` to install the latest version of Linkerd.
 
-   <a href="img/install-linkerd.png">
-   <img src="img/install-linkerd.png" width="50%" align="center" />
-   </a>
+<a href="img/install-linkerd.png">
+<img src="img/install-linkerd.png" width="50%" align="center" />
+</a>
 
 <small>For manual steps go [here](#appendix)</small>
 
