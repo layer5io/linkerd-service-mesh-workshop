@@ -6,7 +6,7 @@ To play with Linkerd and demonstrate some of it's capabilities, you will deploy 
 
 Emojivoto is a sample microservice application that allows users to vote for their favorite emoji. It displays votes received on a leaderboard. Emojivoto has no dependecies on Linkerd, but will run fine either on or off the service mesh.
 
-### <a name="auto"></a> A note on sidecar proxy injection
+### <a name="auto"></a> But first, a note on sidecar proxy injection
 
 The Linkerd sidecar proxy can be either manually or automatically injected into your application's pods.
 
