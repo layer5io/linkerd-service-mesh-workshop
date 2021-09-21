@@ -25,4 +25,3 @@ labels:
          To amend the commits in this PR with your signoff using the instructions provided in the DCO check above. \n\n
          To configure your dev environment to automatically signoff on your commits in the future, see [these instructions](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)."
         action: open
- 
